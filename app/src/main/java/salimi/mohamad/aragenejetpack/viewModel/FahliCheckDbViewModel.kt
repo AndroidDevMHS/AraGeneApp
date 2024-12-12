@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import salimi.mohamad.aragenejetpack.data.model.FahliCheckList
 import salimi.mohamad.aragenejetpack.data.repository.FahliCheckListRepository
-import salimi.mohamad.aragenejetpack.helper.cancelGroupNotifications
+import salimi.mohamad.aragenejetpack.helper.cancelNotificationsForGroup
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,16 +21,17 @@ class FahliCheckDbViewModel @Inject constructor(
 
     val allCheckList: Flow<List<FahliCheckList>> = repository.allCheckList
 
-    fun addNewGroup(item: FahliCheckList){
+    fun addNewItem(item: FahliCheckList, callback: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addNewGroup(item)
+            val itemId = repository.addNewGroup(item)
+            callback(itemId)
         }
     }
 
-    fun deleteGroup(item:FahliCheckList){
+    fun deleteGroup(item: FahliCheckList) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteGroup(item)
-            cancelGroupNotifications(context,item)
+            cancelNotificationsForGroup(context, item.id)
         }
     }
 }

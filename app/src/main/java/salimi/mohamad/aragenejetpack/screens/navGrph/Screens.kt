@@ -2,12 +2,16 @@ package salimi.mohamad.aragenejetpack.screens.navGrph
 
 sealed class Screens(val route:String) {
 
-    object Splash: Screens(route = "SplashScreen")
-    object Login: Screens(route = "Login")
-    object OtpAuth: Screens(route = "OtpAuthScreen")
-    object FahliCheckBox: Screens(route="FahliChecked")
-    object Home: Screens(route = "Home")
-    object About: Screens(route = "About")
-    object Account: Screens(route = "Account")
-    object FahliMainScreen:Screens(route = "FahliMainScreen")
+    data object Splash: Screens(route = "SplashScreen")
+    data object Login: Screens(route = "Login")
+    data  object OtpAuth: Screens(route = "OtpAuthScreen")
+    data object FahliCheckBox: Screens(route="FahliChecked")
+    data object Home: Screens(route = "Home")
+    data object About: Screens(route = "About")
+    data object Account: Screens(route = "Account")
+    data object FahliMainScreen:Screens(route = "FahliMainScreen")
+    data object Planner:Screens(route = "Planner")
+    data object VideoShow:Screens(route = "videoShow")
+    data object Article:Screens(route = "Article")
+
 }

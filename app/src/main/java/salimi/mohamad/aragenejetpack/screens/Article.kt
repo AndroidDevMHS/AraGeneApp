@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-fun ArticleScreen(){
+fun Article(){
     Column (modifier = Modifier.fillMaxSize()){
         Text(text="مقالات کاربردی")
     }

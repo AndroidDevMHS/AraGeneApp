@@ -8,6 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import salimi.mohamad.aragenejetpack.data.db.FahliDatabase
+import salimi.mohamad.aragenejetpack.data.db.PlannerDao
+import salimi.mohamad.aragenejetpack.data.repository.PlannerRepository
 import salimi.mohamad.aragenejetpack.utils.Constants.DATABASE_NAME
 import javax.inject.Singleton
 
@@ -28,4 +30,14 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideDao(database: FahliDatabase) = database.checkListDao()
+
+    @Singleton
+    @Provides
+    fun providePlannerDao(database: FahliDatabase): PlannerDao {
+        return database.plannerDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRepository(plannerDao: PlannerDao)=PlannerRepository(plannerDao)
 }

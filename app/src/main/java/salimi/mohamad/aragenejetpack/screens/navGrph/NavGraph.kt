@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
@@ -37,26 +39,32 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.data.model.BtnNavItem
 import salimi.mohamad.aragenejetpack.screens.About
 import salimi.mohamad.aragenejetpack.screens.AccountScreen
+import salimi.mohamad.aragenejetpack.screens.Article
 import salimi.mohamad.aragenejetpack.screens.FahliCheckList
 import salimi.mohamad.aragenejetpack.screens.FahliMainScreen
 import salimi.mohamad.aragenejetpack.screens.Home
+import salimi.mohamad.aragenejetpack.screens.Planner
+import salimi.mohamad.aragenejetpack.screens.VideoShow
 import salimi.mohamad.aragenejetpack.screens.login.LoginScreen
 import salimi.mohamad.aragenejetpack.screens.login.OtpAuthScreen
 import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
+import salimi.mohamad.aragenejetpack.viewModel.PlannerViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
 
 @Composable
 fun SetupNavGraph(
     context: Context,
-    viewModel: SmsViewModel,
+    viewModelSms: SmsViewModel,
     viewModelDataStore: DataStoreViewModel,
-    viewModelDataBase: FahliCheckDbViewModel
+    viewModelDataBase: FahliCheckDbViewModel,
+    viewModelPlanner:PlannerViewModel
 ) {
     val startDestination = viewModelDataStore.getUserLoginState().let {
         if (it) Screens.Home.route else Screens.Home.route
@@ -76,7 +84,8 @@ fun SetupNavGraph(
             bottomBar = {
                 if (currentDestination == Screens.Home.route ||
                     currentDestination == Screens.About.route ||
-                    currentDestination == Screens.Account.route
+                    currentDestination == Screens.Account.route ||
+                    currentDestination == Screens.Planner.route
                 ) {
                     BottomNavigationBar(navController = navController)
                 }
@@ -99,7 +108,7 @@ fun SetupNavGraph(
                 composable(
                     route = Screens.Account.route
                 ) {
-                    AccountScreen(navController, viewModel, viewModelDataStore)
+                    AccountScreen(navController, viewModelSms, viewModelDataStore)
                 }
                 composable(
                     Screens.FahliMainScreen.route
@@ -107,7 +116,7 @@ fun SetupNavGraph(
                     FahliMainScreen(navController)
                 }
                 composable(route = Screens.Login.route) { _ ->
-                    LoginScreen(navController, viewModel, context)
+                    LoginScreen(navController, viewModelSms, context)
                 }
                 composable(
                     Screens.OtpAuth.route + "/{phoneNumber}/{otp}",
@@ -119,7 +128,7 @@ fun SetupNavGraph(
                     val otp = navBackStackEntry.arguments?.getInt("otp")
                     if (phoneNumber != null && otp != null) {
                         OtpAuthScreen(
-                            viewModel = viewModel,
+                            viewModel = viewModelSms,
                             phoneNumber = phoneNumber,
                             otp = otp,
                             onLoginSuccess = {
@@ -137,8 +146,23 @@ fun SetupNavGraph(
                 }
 
                  composable(Screens.FahliCheckBox.route) {
-                         FahliCheckList(viewModelDataBase)
+                         FahliCheckList(context,viewModelDataStore,viewModelDataBase)
                      }
+                composable(route=Screens.Planner.route,
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = "app://${Screens.Planner.route}"
+                        }
+                    )
+                ){
+                    Planner(navController, viewModel =viewModelPlanner )
+                }
+                composable(Screens.VideoShow.route){
+                    VideoShow(navController)
+                }
+                composable(Screens.Article.route){
+                    Article()
+                }
             }
         }
     }
@@ -155,6 +179,15 @@ fun BottomNavigationBar(navController: NavController) {
             unSelectedIcon = Icons.Outlined.Info,
             hasNews = false
         ),
+
+        BtnNavItem(
+            title = "برنامه",
+            route = Screens.Planner.route,
+            selectedIcon = Icons.Filled.DateRange,
+            unSelectedIcon = Icons.Outlined.DateRange,
+            hasNews = false
+        ),
+
         BtnNavItem(
             title = "خانه",
             route = Screens.Home.route,
@@ -162,6 +195,7 @@ fun BottomNavigationBar(navController: NavController) {
             unSelectedIcon = Icons.Outlined.Home,
             hasNews = false
         ),
+
         BtnNavItem(
             title = "حساب کاربری",
             route = Screens.Account.route,
@@ -180,7 +214,7 @@ fun BottomNavigationBar(navController: NavController) {
                 selected = currentDestination == btnNavItem.route,
                 onClick = {
                     navController.navigate(route = btnNavItem.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        popUpTo(navController.graph.startDestinationId) { inclusive = false }
                         launchSingleTop = true
                         restoreState = true
                     }

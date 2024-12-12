@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -51,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import ir.huri.jcal.JalaliCalendar
+import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.ui.theme.backgroundColor
 import salimi.mohamad.aragenejetpack.ui.theme.selectedIconColor
 import salimi.mohamad.aragenejetpack.ui.theme.textColor
@@ -104,8 +106,8 @@ fun JalaliDatePickerDialog(
     cancelBtnColor: Color = MaterialTheme.colorScheme.textColorHighlight,
     todayBtnColor: Color = MaterialTheme.colorScheme.textColorHighlight,
     nextPreviousBtnColor: Color = MaterialTheme.colorScheme.textColor,
-    fontFamily: FontFamily = FontFamily.Default,
-    fontSize: TextUnit = 14.sp
+    fontFamily: FontFamily = FontFamily(Font(R.font.sans_bold)),
+    fontSize: TextUnit = 18.sp
 ) {
     if (openDialog.value) {
         Dialog(

@@ -18,6 +18,7 @@ class DataStoreViewModel @Inject constructor(
     companion object {
         const val USER_LOGIN_STATE_KEY = "UserLoginKey"
         const val USER_PHONE_KEY = "UserPhoneKey"
+        const val FIRST_LOGIN_KEY="FirstLogin"
 
     }
     init {
@@ -33,9 +34,9 @@ class DataStoreViewModel @Inject constructor(
 
         }
     }
-    fun saveFirstLogin(key:String,showWelcome: Boolean) {
+    fun saveFirstLogin(showWelcome: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.putBoolean(key, showWelcome)
+            repository.putBoolean(FIRST_LOGIN_KEY, showWelcome)
 
         }
     }
@@ -47,12 +48,11 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-
     fun getUserLoginState(): Boolean =
         runBlocking { repository.getBoolean(USER_LOGIN_STATE_KEY) ?: false }
 
-    fun getUserWelcome(key:String): Boolean =
-        runBlocking { repository.getBoolean(key) ?: true }
+    fun getUserWelcome(): Boolean =
+        runBlocking { repository.getBoolean(FIRST_LOGIN_KEY) ?: true }
 
     val userPhoneNumber = MutableStateFlow("")
     fun getUserPhone() {

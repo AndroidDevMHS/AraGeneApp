@@ -1,8 +1,10 @@
 package salimi.mohamad.aragenejetpack.screens
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,20 +13,23 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -39,91 +44,122 @@ import androidx.navigation.NavController
 import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 
+
 @Composable
 fun Home(navController: NavController) {
-    Column(
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(Unit) {
+        scale.animateTo(
+            targetValue = 1.1f,
+            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+        )
+    }
+    val offsetY = remember { Animatable(300f) }
+    LaunchedEffect(Unit) {
+        offsetY.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(durationMillis = 600)
+        )
+    }
+
+    LazyColumn(
         modifier = Modifier
+            .offset(y = offsetY.value.dp)
             .fillMaxSize()
             .padding(top = 50.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                .height(230.dp)
-                .shadow(
-                    elevation = 2.dp,
-                    clip = true,
-                    shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
+        item {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                 ),
-            shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
-        ) {
-            Text(
-                text = "دستورالعمل ها",
+                //elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                    .padding(top = 20.dp, start = 20.dp, end = 20.dp),
-                style = TextStyle(
-                    textDirection = TextDirection.Rtl,
-                    textAlign = TextAlign.Start,
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.sans_bold))
-                )
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(
-                        color = MaterialTheme.colorScheme.inverseOnSurface,
-                    ),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceAround
+                    .height(205.dp)
+                    .shadow(
+                        0.dp,
+                        shape = RoundedCornerShape(topEnd = 12.dp, topStart = 12.dp),
+                        clip = true
+                    )
             ) {
-                Column(
+                Text(
+                    text = "دستورالعمل ها",
                     modifier = Modifier
-                        .weight(0.5f)
-                        .padding(start = 20.dp, end = 5.dp, bottom = 8.dp)
-                ) {
-                    MainScreenItemsRe(
-                        painterResource(R.drawable.super_mix),
-                        "سوپر میکس",
-                        "",
-                        navController
+                        .fillMaxWidth()
+                        // .background(color = MaterialTheme.colorScheme.primary)
+                        .padding(top = 20.dp, start = 20.dp, end = 20.dp),
+                    style = TextStyle(
+                        textDirection = TextDirection.Rtl,
+                        textAlign = TextAlign.Start,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.sans_bold))
                     )
-                }
-                Column(
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Row(
                     modifier = Modifier
-                        .weight(0.5f)
-                        .padding(end = 20.dp, start = 5.dp, bottom = 8.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                    //.background(
+                    //   color = MaterialTheme.colorScheme.primary,
+                    // )
+                    ,
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    MainScreenItemsRe(
-                        painterResource(R.drawable.hormon),
-                        "پک همزمان سازی",
-                        Screens.FahliMainScreen.route,
-                        navController
-                    )
-                }
+                    Column(
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .padding(start = 20.dp, end = 5.dp, bottom = 8.dp)
+                    ) {
+                        MainScreenItemsRe(
+                            painterResource(R.drawable.super_mix),
+                            "سوپر میکس",
+                            "",
+                            navController
+                        )
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .padding(end = 20.dp, start = 5.dp, bottom = 8.dp)
+                    ) {
+                        MainScreenItemsRe(
+                            painterResource(R.drawable.hormon),
+                            "پک همزمان سازی",
+                            "",
+                            navController
+                        )
+                    }
 
 
+                }
             }
-        }
 
-        MainScreenItemNo(
-            image = painterResource(R.drawable.planner),
-            text = "چک لیست ثبت اطلاعات همزمان سازی",
-            navController = navController,
-            page = Screens.FahliCheckBox.route
-        )
-        MainScreenItemNo(
-            image = painterResource(R.drawable.video_player),
-            text = "ویدیو آموزشی",
-            navController = navController,
-            page = ""
-        )
+            MainScreenItemNo(
+                image = painterResource(R.drawable.planner),
+                text = "چک لیست همزمان سازی",
+                navController = navController,
+                page = Screens.FahliCheckBox.route
+            )
+            MainScreenItemNo(
+                image = painterResource(R.drawable.video_player),
+                text = "ویدیو آموزشی",
+                navController = navController,
+                page = Screens.VideoShow.route
+            )
+            MainScreenItemNo(
+                image = painterResource(R.drawable.newspaper),
+                text = "مقالات کاربردی",
+                navController = navController,
+                page = Screens.Article.route
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+        }
     }
 }
 

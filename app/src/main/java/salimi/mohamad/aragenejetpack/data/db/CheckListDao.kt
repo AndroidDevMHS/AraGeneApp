@@ -11,18 +11,19 @@ import salimi.mohamad.aragenejetpack.data.model.FahliCheckList
 
 @Dao
 interface CheckListDao {
+
     @Query("SELECT * FROM checkListTable")
     fun getAllItems(): Flow<List<FahliCheckList>>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun addNewStudent(student: FahliCheckList)
+    suspend fun addNewItem(item: FahliCheckList): Long
 
     @Update
-    suspend fun updateStudent(student: FahliCheckList)
+    suspend fun updateItem(item: FahliCheckList)
 
     @Delete
-    suspend fun deleteStudent(student: FahliCheckList)
+    suspend fun deleteItem(item: FahliCheckList)
 
     @Query("DELETE FROM checkListTable")
-    suspend fun deleteAllStudents()
+    suspend fun deleteAllItem()
 }

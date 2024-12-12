@@ -18,18 +18,20 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.sharp.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,7 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -65,7 +67,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,16 +79,22 @@ import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.data.model.FahliCheckList
 import salimi.mohamad.aragenejetpack.helper.JalaliDatePickerDialog
 import salimi.mohamad.aragenejetpack.helper.convertPersianToGregorian
-import salimi.mohamad.aragenejetpack.helper.scheduleNotificationsForGroup
+import salimi.mohamad.aragenejetpack.helper.scheduleNotifications
+import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
 
-//@Preview(showBackground = true, showSystemUi = true)
+var welcomeMassage = mutableStateOf(true)
+
 @Composable
-fun FahliCheckList(viewModelDataBase: FahliCheckDbViewModel) {
-    val context = LocalContext.current
+fun FahliCheckList(
+    context: Context,
+    viewModelDataStore: DataStoreViewModel,
+    viewModelDataBase: FahliCheckDbViewModel
+) {
     var itemsList by remember { mutableStateOf(emptyList<FahliCheckList>()) }
     var addDialog by remember { mutableStateOf(false) }
 
+    welcomeMassage.value = viewModelDataStore.getUserWelcome()
 
     LaunchedEffect(key1 = true) {
         viewModelDataBase.allCheckList.collectLatest { item ->
@@ -96,56 +106,60 @@ fun FahliCheckList(viewModelDataBase: FahliCheckDbViewModel) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        if (itemsList.isEmpty()) {
-            val text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 28.sp,
-                        fontFamily = FontFamily(Font(R.font.sans_bold))
-                    )
-                ) { append("+\n") }
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.sans_bold))
-                    )
-                ) { append("افزودن گروه جدید برای همزمان سازی") }
-
+        if (welcomeMassage.value) {
+            WelcomeMessage {
+                viewModelDataStore.saveFirstLogin(showWelcome = false)
+                welcomeMassage.value = false
             }
-            ClickableText(
-                text = text,
-                onClick = { addDialog = true },
-                style = TextStyle(textAlign = TextAlign.Center)
-            )
-
-
         } else {
-            AnimatedVisibility(visible = itemsList.isNotEmpty()) {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(18.dp),
-                ) {
-                    items(items = itemsList, key = { it.id }) { group ->
-                        LazyItem(group, viewModelDataBase, { addDialog = true })
+            if (itemsList.isEmpty()) {
+                val text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            fontSize = 28.sp,
+                            fontFamily = FontFamily(Font(R.font.sans_bold))
+                        )
+                    ) { append("+\n") }
+                    withStyle(
+                        style = SpanStyle(
+                            fontSize = 20.sp,
+                            fontFamily = FontFamily(Font(R.font.sans_bold))
+                        )
+                    ) { append("افزودن گروه جدید برای همزمان سازی") }
+
+                }
+                ClickableText(
+                    text = text,
+                    onClick = { addDialog = true },
+                    style = TextStyle(textAlign = TextAlign.Center)
+                )
+            } else {
+                AnimatedVisibility(visible = true) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp),
+                    ) {
+                        items(items = itemsList, key = { it.id }) { group ->
+                            LazyItem(group, viewModelDataBase) { addDialog = true }
+                        }
                     }
                 }
             }
-        }
-
-        FloatingActionButton(
-            onClick = {
-                addDialog = true
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 25.dp, bottom = 25.dp),
-            containerColor = MaterialTheme.colorScheme.primary
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "افزودن",
-                tint = MaterialTheme.colorScheme.onPrimary // رنگ آیکون)
-            )
+            FloatingActionButton(
+                onClick = {
+                    addDialog = true
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 25.dp, bottom = 25.dp),
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "افزودن",
+                    tint = MaterialTheme.colorScheme.onPrimary // رنگ آیکون)
+                )
+            }
         }
         if (addDialog) {
             DialogForAdd({ addDialog = false }, viewModelDataBase, context)
@@ -160,20 +174,15 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
     var openDialog by remember { mutableStateOf(false) }
     val gradientBox = Brush.horizontalGradient(
         colors = listOf(
-            colorResource(R.color.light_blue),
+            colorResource(R.color.lightGreen),
             colorResource(R.color.white)
         )
 
     )
-    val gradientBoxInverse = Brush.horizontalGradient(
+    val gradientBoxBorder = Brush.horizontalGradient(
         colors = listOf(
             colorResource(R.color.white),
-            colorResource(R.color.white),
-            colorResource(R.color.white),
-            colorResource(R.color.white),
-            colorResource(R.color.white),
-            colorResource(R.color.white),
-            colorResource(R.color.light_blue)
+            colorResource(R.color.lightGreen)
         )
 
     )
@@ -192,7 +201,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                     modifier = Modifier
                         .weight(0.8f)
                         .fillMaxHeight()
-                        .background(brush = gradientBoxInverse)
+                        .background(color = Color.White)
                         .padding(start = 10.dp, top = 20.dp, bottom = 20.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.Start
@@ -257,19 +266,8 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                         .weight(0.1f)
                         .fillMaxHeight()
                         .background(brush = gradientBox),
-                    verticalArrangement = Arrangement.SpaceAround
+                    verticalArrangement = Arrangement.Bottom
                 ) {
-                    IconButton(onClick = {
-                        //onEdit()
-                    }) {
-                        Icon(
-                            Icons.Sharp.Edit,
-                            contentDescription = "",
-                            tint = colorResource(R.color.green_dark)
-
-                        )
-
-                    }
                     IconButton(onClick = {
                         openDialog = true
 
@@ -302,6 +300,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
 
 }
 
+
 @Composable
 fun DialogForAdd(
     onDismiss: () -> Unit,
@@ -313,6 +312,7 @@ fun DialogForAdd(
     var dateOfStater by remember { mutableStateOf("") }
     var dateOfStartMiladi by remember { mutableStateOf("") }
     val openCalender = remember { mutableStateOf(false) }
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Dialog(
             onDismissRequest = {},
@@ -366,7 +366,7 @@ fun DialogForAdd(
                         onValueChange = { groupName = it },
                         placeholder = {
                             Text(
-                                "نام گروه ؟",
+                                "نام گروه",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
                                 fontSize = 14.sp
@@ -404,7 +404,7 @@ fun DialogForAdd(
                         ),
                         placeholder = {
                             Text(
-                                "تعداد همزمان سازی در این گروه؟",
+                                "تعداد میش در این گروه",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
                                 fontSize = 14.sp
@@ -467,13 +467,13 @@ fun DialogForAdd(
                                     dateOfStartShamsi = dateOfStater,
                                     dateOfStartMiladi = dateOfStartMiladi
                                 )
-                                viewModelDataBase.addNewGroup(
-                                    newGroup
-                                )
-                                scheduleNotificationsForGroup(
-                                    context = context,
-                                    group = newGroup
-                                )
+                                viewModelDataBase.addNewItem(newGroup) { itemId ->
+                                    scheduleNotifications(
+                                        context = context,
+                                        item = newGroup,
+                                        itemId = itemId.toInt()
+                                    )
+                                }
                                 onDismiss()
                             } else {
                                 Toast.makeText(
@@ -502,4 +502,114 @@ fun DialogForAdd(
             dateOfStartMiladi = convertPersianToGregorian(it.toString())
         },
         onSelectDay = { dateOfStater = it.toString() })
+}
+
+//
+@Composable
+fun WelcomeMessage(onDismiss: () -> Unit) {
+    var currentIndex by remember { mutableIntStateOf(0) }
+
+    val messages = listOf(
+        "با فشردن علامت + \n گروه های میش هایی که می خواهید همزمان سازی کنید را وارد نمایید ",
+        "فراموش نکنید که \nتاریخ شروع همزمان سازی را نیز وارد کنید تا اعلان های  مربوط به کارهای لازم الاجرا برای شما ارسال شود ",
+        "برای گروه بندی میش هایتان باید به تعداد قوچتان توجه کنید\n هر قوچ در هر دوره می تواند پنج میش را آبستن کند",
+        "برای مثال \nاگر پنجاه رأس میش دارید و دو قوچ، شما باید پنج گروه ده تایی اضافه کنید و یا مثلا اگر پنج قوچ دارید، دو گروه 25 تایی اضافه کنید و ... ",
+        "لطفا برای تاریخ های شروع همزمان سازی هر گروه از قبل برنامهریزی کنید."
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Black.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            modifier = Modifier
+                .heightIn(min = 300.dp, max = 400.dp)
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .background(color = colorResource(R.color.lightGreen))
+                    .weight(0.9f)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = { if (currentIndex > 0) currentIndex-- },
+                        enabled = currentIndex > 0
+                    ) {
+                        Icon(
+                            Icons.Rounded.KeyboardArrowLeft,
+                            "",
+                            modifier = Modifier.size(48.dp),
+                            tint = if (currentIndex > 0) colorResource(R.color.mediumGreen) else Color.LightGray
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(0.9f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = messages[currentIndex],
+
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            fontSize = 24.sp,
+                            textDirection = TextDirection.Rtl,
+                            lineHeight = 28.sp
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = { if (currentIndex < messages.size - 1) currentIndex++ },
+                        enabled = currentIndex < messages.size - 1
+                    ) {
+                        Icon(
+                            Icons.Rounded.KeyboardArrowRight,
+                            "",
+                            modifier = Modifier.size(48.dp),
+                            tint = if (currentIndex < messages.size - 1) colorResource(R.color.mediumGreen) else Color.LightGray
+                        )
+                    }
+                }
+
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.15f),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(
+                    enabled = currentIndex == messages.size - 1,
+                    onClick = {
+                        onDismiss()
+                    }) {
+                    Text(
+                        text = "متوجه شدم",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            fontSize = 20.sp
+                        ),
+                        color = if (currentIndex == messages.size - 1) colorResource(R.color.royal_red) else Color.LightGray
+                    )
+                }
+            }
+        }
+    }
 }

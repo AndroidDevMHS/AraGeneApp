@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 import salimi.mohamad.aragenejetpack.ui.MainActivity
-import salimi.mohamad.aragenejetpack.ui.pendingIntentO
+
 
 
 fun sendNotification(message: String, groupId: Int, context: Context) {

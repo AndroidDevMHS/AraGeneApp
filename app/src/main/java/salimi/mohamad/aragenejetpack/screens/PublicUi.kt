@@ -19,8 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -69,6 +73,82 @@ import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
 
 @SuppressLint("InlinedApi")
+
+@Composable
+fun PublicNoteDialog(
+    onDismiss: () -> Unit,
+    image: Painter,
+    title: String,
+    text: String
+) {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        Dialog(onDismissRequest = {
+            onDismiss()
+        }) {
+            Card(
+                modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 5.dp),
+                shape = RoundedCornerShape(15.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(70.dp)
+                            .padding(8.dp),
+                        painter = image,
+                        contentDescription = ""
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = title,
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = text,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextButton(
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        onClick = {
+                            onDismiss()
+                        }) {
+                        Text(
+                            text = "متوجه شدم",
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            fontSize = 19.sp,
+                            color = colorResource(R.color.green_dark)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 @Composable
@@ -163,7 +243,7 @@ fun PublicDialog(
 }
 
 @Composable
-fun InternetAlertDialog() {
+fun InternetAlertDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Dialog(
@@ -186,6 +266,9 @@ fun InternetAlertDialog() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    IconButton(onClick = { onDismiss() }) {
+                        Icon(Icons.Rounded.Clear, "", modifier = Modifier.align(Alignment.Start))
+                    }
                     Image(
                         modifier = Modifier
                             .size(70.dp)

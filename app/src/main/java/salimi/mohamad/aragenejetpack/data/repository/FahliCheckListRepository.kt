@@ -5,24 +5,24 @@ import salimi.mohamad.aragenejetpack.data.db.CheckListDao
 import salimi.mohamad.aragenejetpack.data.model.FahliCheckList
 import javax.inject.Inject
 
-class FahliCheckListRepository @Inject constructor(private val studentDao: CheckListDao) {
+class FahliCheckListRepository @Inject constructor(private val checkListDao: CheckListDao) {
 
-    val allCheckList:Flow<List<FahliCheckList>> = studentDao.getAllItems()
+    val allCheckList:Flow<List<FahliCheckList>> = checkListDao.getAllItems()
 
-    suspend fun addNewGroup(item: FahliCheckList){
-        studentDao.addNewStudent(item)
+    suspend fun addNewGroup(item: FahliCheckList):Long{
+        return checkListDao.addNewItem(item)
     }
 
     suspend fun updateGroup(item:FahliCheckList){
-        studentDao.updateStudent(item)
+        checkListDao.updateItem(item)
     }
 
     suspend fun deleteGroup(item: FahliCheckList){
 
-        studentDao.deleteStudent(item)
+        checkListDao.deleteItem(item)
     }
 
     suspend fun deleteAll(){
-        studentDao.deleteAllStudents()
+        checkListDao.deleteAllItem()
     }
 }
