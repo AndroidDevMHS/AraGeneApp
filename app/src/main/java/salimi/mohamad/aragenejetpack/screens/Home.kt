@@ -1,8 +1,5 @@
 package salimi.mohamad.aragenejetpack.screens
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,8 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,27 +41,11 @@ import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 
 @Composable
 fun Home(navController: NavController) {
-    val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(Unit) {
-        scale.animateTo(
-            targetValue = 1.1f,
-            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
-        )
-    }
-    val offsetY = remember { Animatable(300f) }
-    LaunchedEffect(Unit) {
-        offsetY.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = 600)
-        )
-    }
 
     LazyColumn(
         modifier = Modifier
-            .offset(y = offsetY.value.dp)
             .fillMaxSize()
-            .padding(top = 50.dp),
+            ,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -80,6 +58,7 @@ fun Home(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(205.dp)
+                    .padding(top = 30.dp)
                     .shadow(
                         0.dp,
                         shape = RoundedCornerShape(topEnd = 12.dp, topStart = 12.dp),
@@ -131,7 +110,7 @@ fun Home(navController: NavController) {
                         MainScreenItemsRe(
                             painterResource(R.drawable.hormon),
                             "پک همزمان سازی",
-                            "",
+                            Screens.FahliMainScreen.route,
                             navController
                         )
                     }
@@ -214,7 +193,7 @@ fun MainScreenItemNo(image: Painter, text: String, page: String, navController: 
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
             .fillMaxWidth()
-            .height(150.dp)
+            .height(140.dp)
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp), clip = true),
         onClick = { navController.navigate(page) }
 

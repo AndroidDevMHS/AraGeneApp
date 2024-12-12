@@ -260,15 +260,18 @@ fun InternetAlertDialog(onDismiss: () -> Unit) {
                 shape = RoundedCornerShape(15.dp),
                 elevation = CardDefaults.cardElevation(8.dp)
             ) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start){
+                IconButton(
+                    onClick = { onDismiss() }) {
+                    Icon(Icons.Rounded.Clear, "")
+                }}
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    IconButton(onClick = { onDismiss() }) {
-                        Icon(Icons.Rounded.Clear, "", modifier = Modifier.align(Alignment.Start))
-                    }
+
                     Image(
                         modifier = Modifier
                             .size(70.dp)

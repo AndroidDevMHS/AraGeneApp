@@ -83,7 +83,6 @@ import salimi.mohamad.aragenejetpack.helper.scheduleNotifications
 import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
 
-var welcomeMassage = mutableStateOf(true)
 
 @Composable
 fun FahliCheckList(
@@ -93,9 +92,11 @@ fun FahliCheckList(
 ) {
     var itemsList by remember { mutableStateOf(emptyList<FahliCheckList>()) }
     var addDialog by remember { mutableStateOf(false) }
+    val welcomeMessage = remember { mutableStateOf(true) }
 
-    welcomeMassage.value = viewModelDataStore.getUserWelcome()
-
+    LaunchedEffect(Unit) {
+        welcomeMessage.value = viewModelDataStore.getUserWelcome()
+    }
     LaunchedEffect(key1 = true) {
         viewModelDataBase.allCheckList.collectLatest { item ->
             itemsList = item
@@ -104,12 +105,12 @@ fun FahliCheckList(
     Box(
         modifier = Modifier
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = if(itemsList.isEmpty()) Alignment.Center else Alignment.TopCenter
     ) {
-        if (welcomeMassage.value) {
+        if (welcomeMessage.value) {
             WelcomeMessage {
                 viewModelDataStore.saveFirstLogin(showWelcome = false)
-                welcomeMassage.value = false
+                welcomeMessage.value = false
             }
         } else {
             if (itemsList.isEmpty()) {
@@ -126,7 +127,6 @@ fun FahliCheckList(
                             fontFamily = FontFamily(Font(R.font.sans_bold))
                         )
                     ) { append("افزودن گروه جدید برای همزمان سازی") }
-
                 }
                 ClickableText(
                     text = text,

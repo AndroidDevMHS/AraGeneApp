@@ -35,7 +35,7 @@ import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 
 @Composable
-fun FahliMainScreen(navController: NavController) {
+fun FahliMainHelp(navController: NavController) {
     val gradientBox = Brush.horizontalGradient(
         colors = listOf(
             colorResource(

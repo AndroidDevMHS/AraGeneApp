@@ -23,8 +23,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -40,6 +45,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.data.model.BtnNavItem
@@ -47,10 +56,12 @@ import salimi.mohamad.aragenejetpack.screens.About
 import salimi.mohamad.aragenejetpack.screens.AccountScreen
 import salimi.mohamad.aragenejetpack.screens.Article
 import salimi.mohamad.aragenejetpack.screens.FahliCheckList
-import salimi.mohamad.aragenejetpack.screens.FahliMainScreen
+import salimi.mohamad.aragenejetpack.screens.FahliMainHelp
+
 import salimi.mohamad.aragenejetpack.screens.Home
 import salimi.mohamad.aragenejetpack.screens.Planner
 import salimi.mohamad.aragenejetpack.screens.VideoShow
+import salimi.mohamad.aragenejetpack.screens.isItemAdded
 import salimi.mohamad.aragenejetpack.screens.login.LoginScreen
 import salimi.mohamad.aragenejetpack.screens.login.OtpAuthScreen
 import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
@@ -64,7 +75,7 @@ fun SetupNavGraph(
     viewModelSms: SmsViewModel,
     viewModelDataStore: DataStoreViewModel,
     viewModelDataBase: FahliCheckDbViewModel,
-    viewModelPlanner:PlannerViewModel
+    viewModelPlanner: PlannerViewModel
 ) {
     val startDestination = viewModelDataStore.getUserLoginState().let {
         if (it) Screens.Home.route else Screens.Home.route
@@ -73,7 +84,16 @@ fun SetupNavGraph(
     val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    var badge by remember { mutableStateOf(false) }
     val currentDestination = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(Unit) {
+        viewModelPlanner.allMessage.collectLatest { item->
+            if(item.isEmpty()){
+                badge=true
+            }
+        }
+    }
 
 
     Surface(
@@ -87,7 +107,7 @@ fun SetupNavGraph(
                     currentDestination == Screens.Account.route ||
                     currentDestination == Screens.Planner.route
                 ) {
-                    BottomNavigationBar(navController = navController)
+                    BottomNavigationBar(navController = navController,badge)
                 }
             }
         ) { innerPadding ->
@@ -113,7 +133,7 @@ fun SetupNavGraph(
                 composable(
                     Screens.FahliMainScreen.route
                 ) {
-                    FahliMainScreen(navController)
+                    FahliMainHelp(navController)
                 }
                 composable(route = Screens.Login.route) { _ ->
                     LoginScreen(navController, viewModelSms, context)
@@ -145,22 +165,28 @@ fun SetupNavGraph(
                     }
                 }
 
-                 composable(Screens.FahliCheckBox.route) {
-                         FahliCheckList(context,viewModelDataStore,viewModelDataBase)
-                     }
-                composable(route=Screens.Planner.route,
+                composable(Screens.FahliCheckBox.route) {
+                    FahliCheckList(context, viewModelDataStore, viewModelDataBase)
+                }
+                composable(route = Screens.Planner.route,
                     deepLinks = listOf(
                         navDeepLink {
                             uriPattern = "app://${Screens.Planner.route}"
                         }
                     )
-                ){
-                    Planner(navController, viewModel =viewModelPlanner )
+                ) {
+                    Planner(
+                        navController,
+                        viewModelSms = viewModelSms,
+                        viewModelPlanner = viewModelPlanner,
+                        viewModelDataStore = viewModelDataStore,
+                        context
+                    )
                 }
-                composable(Screens.VideoShow.route){
+                composable(Screens.VideoShow.route) {
                     VideoShow(navController)
                 }
-                composable(Screens.Article.route){
+                composable(Screens.Article.route) {
                     Article()
                 }
             }
@@ -169,7 +195,7 @@ fun SetupNavGraph(
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController,badge:Boolean) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
     val items = listOf(
         BtnNavItem(
@@ -185,7 +211,7 @@ fun BottomNavigationBar(navController: NavController) {
             route = Screens.Planner.route,
             selectedIcon = Icons.Filled.DateRange,
             unSelectedIcon = Icons.Outlined.DateRange,
-            hasNews = false
+            hasNews = badge
         ),
 
         BtnNavItem(
