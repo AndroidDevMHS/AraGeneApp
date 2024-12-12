@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "612284235457",
+    "project_id": "androidaragene",
+    "storage_bucket": "androidaragene.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612284235457:android:3ec945c457b5e2ed431e40",
+        "android_client_info": {
+          "package_name": "salimi.mohamad.aragenejetpack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiJXwQC3Xe27m-m_zU02jtw0Ae_7I3y-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
