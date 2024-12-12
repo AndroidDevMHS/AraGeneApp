@@ -133,7 +133,7 @@ fun SetupNavGraph(
                 composable(
                     Screens.FahliMainScreen.route
                 ) {
-                    FahliMainHelp(navController)
+                    FahliMainHelp()
                 }
                 composable(route = Screens.Login.route) { _ ->
                     LoginScreen(navController, viewModelSms, context)
