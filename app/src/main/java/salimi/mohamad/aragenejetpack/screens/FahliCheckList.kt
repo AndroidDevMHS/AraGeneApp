@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -105,7 +106,7 @@ fun FahliCheckList(
     Box(
         modifier = Modifier
             .fillMaxSize(),
-        contentAlignment = if(itemsList.isEmpty()) Alignment.Center else Alignment.TopCenter
+        contentAlignment = if (itemsList.isEmpty()) Alignment.Center else Alignment.TopCenter
     ) {
         if (welcomeMessage.value) {
             WelcomeMessage {
@@ -586,7 +587,22 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                         )
                     }
                 }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    messages.forEachIndexed { index, _ ->
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .background(
+                                    color = if (index == currentIndex) colorResource(R.color.blue2_logo) else Color.Gray,
+                                    shape = CircleShape
+                                )
+                        )
 
+                    }
+                }
             }
             Row(
                 modifier = Modifier
