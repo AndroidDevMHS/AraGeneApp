@@ -60,6 +60,7 @@ import salimi.mohamad.aragenejetpack.screens.FahliMainHelp
 
 import salimi.mohamad.aragenejetpack.screens.Home
 import salimi.mohamad.aragenejetpack.screens.Planner
+import salimi.mohamad.aragenejetpack.screens.SuperMixScreen
 import salimi.mohamad.aragenejetpack.screens.VideoShow
 import salimi.mohamad.aragenejetpack.screens.isItemAdded
 import salimi.mohamad.aragenejetpack.screens.login.LoginScreen
@@ -68,6 +69,7 @@ import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
 import salimi.mohamad.aragenejetpack.viewModel.PlannerViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
+
 
 @Composable
 fun SetupNavGraph(
@@ -78,7 +80,7 @@ fun SetupNavGraph(
     viewModelPlanner: PlannerViewModel
 ) {
     val startDestination = viewModelDataStore.getUserLoginState().let {
-        if (it) Screens.Home.route else Screens.Home.route
+        if (it) Screens.Home.route else Screens.Login.route
     }
 
     val navController = rememberNavController()
@@ -188,6 +190,9 @@ fun SetupNavGraph(
                 }
                 composable(Screens.Article.route) {
                     Article()
+                }
+                composable(Screens.SuperMix.route) {
+                    SuperMixScreen()
                 }
             }
         }

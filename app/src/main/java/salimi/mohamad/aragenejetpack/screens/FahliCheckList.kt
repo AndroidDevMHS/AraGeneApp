@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -141,7 +142,7 @@ fun FahliCheckList(
                         verticalArrangement = Arrangement.spacedBy(18.dp),
                     ) {
                         items(items = itemsList, key = { it.id }) { group ->
-                            LazyItem(group, viewModelDataBase) { addDialog = true }
+                            LazyItem(group, viewModelDataBase)
                         }
                     }
                 }
@@ -153,12 +154,12 @@ fun FahliCheckList(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(end = 25.dp, bottom = 25.dp),
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = colorResource(R.color.blue_logo)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "افزودن",
-                    tint = MaterialTheme.colorScheme.onPrimary // رنگ آیکون)
+                    tint = colorResource(R.color.white) // رنگ آیکون)
                 )
             }
         }
@@ -171,7 +172,7 @@ fun FahliCheckList(
 
 
 @Composable
-fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, onEdit: () -> Unit) {
+fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel) {
     var openDialog by remember { mutableStateOf(false) }
     val gradientBox = Brush.horizontalGradient(
         colors = listOf(
@@ -180,13 +181,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
         )
 
     )
-    val gradientBoxBorder = Brush.horizontalGradient(
-        colors = listOf(
-            colorResource(R.color.white),
-            colorResource(R.color.lightGreen)
-        )
 
-    )
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Card(
             modifier = Modifier
@@ -202,7 +197,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                     modifier = Modifier
                         .weight(0.8f)
                         .fillMaxHeight()
-                        .background(color = Color.White)
+                        .background(color = colorResource(R.color.blue_logo))
                         .padding(start = 10.dp, top = 20.dp, bottom = 20.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.Start
@@ -211,6 +206,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                         Text(
                             text = "نام گروه: ",
                             style = TextStyle(
+                                color = Color.White,
                                 fontSize = 18.sp,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                             )
@@ -219,6 +215,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                             text = group.groupName,
                             style = TextStyle(
                                 fontSize = 20.sp,
+                                color = Color.White,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -229,6 +226,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                             text = "تعداد دام ها: ",
                             style = TextStyle(
                                 fontSize = 18.sp,
+                                color = Color.White,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -237,6 +235,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                             text = "${group.countOfGroup} راس",
                             style = TextStyle(
                                 fontSize = 20.sp,
+                                color = Color.White,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -247,6 +246,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                             text = " شروع همزمان سازی: ",
                             style = TextStyle(
                                 fontSize = 18.sp,
+                                color = Color.White,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -255,6 +255,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                             text = group.dateOfStartShamsi,
                             style = TextStyle(
                                 fontSize = 20.sp,
+                                color=Color.White,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -266,7 +267,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel, on
                     modifier = Modifier
                         .weight(0.1f)
                         .fillMaxHeight()
-                        .background(brush = gradientBox),
+                        .background(color = colorResource(R.color.blue_logo)),
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     IconButton(onClick = {
@@ -515,7 +516,7 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
         "فراموش نکنید که \nتاریخ شروع همزمان سازی را نیز وارد کنید تا اعلان های  مربوط به کارهای لازم الاجرا برای شما ارسال شود ",
         "برای گروه بندی میش هایتان باید به تعداد قوچتان توجه کنید\n هر قوچ در هر دوره می تواند پنج میش را آبستن کند",
         "برای مثال \nاگر پنجاه رأس میش دارید و دو قوچ، شما باید پنج گروه ده تایی اضافه کنید و یا مثلا اگر پنج قوچ دارید، دو گروه 25 تایی اضافه کنید و ... ",
-        "لطفا برای تاریخ های شروع همزمان سازی هر گروه از قبل برنامهریزی کنید."
+        "لطفا برای تاریخ های شروع همزمان سازی هر گروه از قبل برنامه ریزی کنید."
     )
     Box(
         modifier = Modifier
@@ -527,12 +528,12 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             modifier = Modifier
-                .heightIn(min = 300.dp, max = 400.dp)
+                .heightIn(min = 250.dp, max = 350.dp)
                 .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .background(color = colorResource(R.color.lightGreen))
+                    .background(color=MaterialTheme.colorScheme.onSecondary)
                     .weight(0.9f)
             ) {
                 Column(
@@ -547,15 +548,15 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                             Icons.Rounded.KeyboardArrowLeft,
                             "",
                             modifier = Modifier.size(48.dp),
-                            tint = if (currentIndex > 0) colorResource(R.color.mediumGreen) else Color.LightGray
+                            tint = if (currentIndex > 0) colorResource(R.color.blue_logo) else Color.LightGray
                         )
                     }
                 }
-
+                Spacer(modifier=Modifier.width(10.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .weight(0.9f),
+                        .weight(0.8f),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -564,13 +565,14 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
 
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 24.sp,
+                            fontSize = 20.sp,
                             textDirection = TextDirection.Rtl,
                             lineHeight = 28.sp
                         ),
                         textAlign = TextAlign.Center
                     )
                 }
+                Spacer(modifier=Modifier.width(10.dp))
                 Column(
                     modifier = Modifier.fillMaxHeight(),
                     verticalArrangement = Arrangement.Center
@@ -583,31 +585,36 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                             Icons.Rounded.KeyboardArrowRight,
                             "",
                             modifier = Modifier.size(48.dp),
-                            tint = if (currentIndex < messages.size - 1) colorResource(R.color.mediumGreen) else Color.LightGray
+                            tint = if (currentIndex < messages.size - 1) colorResource(R.color.blue_logo) else Color.LightGray
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    messages.forEachIndexed { index, _ ->
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .background(
-                                    color = if (index == currentIndex) colorResource(R.color.blue2_logo) else Color.Gray,
-                                    shape = CircleShape
-                                )
-                        )
 
-                    }
+
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth().background(color=MaterialTheme.colorScheme.onSecondary),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                messages.forEachIndexed { index, _ ->
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(
+                                color = if (index == currentIndex) colorResource(R.color.blue_logo) else Color.Gray,
+                                shape = CircleShape
+                            )
+                    )
+                    Spacer(modifier=Modifier.width(3.dp))
+
                 }
+                Spacer(modifier = Modifier.height(20.dp))
             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.15f),
+                    .weight(0.18f),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -620,12 +627,19 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                         text = "متوجه شدم",
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 20.sp
+                            fontSize = 18.sp
                         ),
-                        color = if (currentIndex == messages.size - 1) colorResource(R.color.royal_red) else Color.LightGray
+                        color = if (currentIndex == messages.size - 1) colorResource(R.color.blue2_logo) else Color.LightGray
                     )
                 }
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewWelcomeMessage() {
+    var show by remember { mutableStateOf(true) }
+    WelcomeMessage { show = false }
 }

@@ -98,7 +98,7 @@ fun Home(navController: NavController) {
                         MainScreenItemsRe(
                             painterResource(R.drawable.super_mix),
                             "سوپر میکس",
-                            "",
+                            Screens.SuperMix.route,
                             navController
                         )
                     }

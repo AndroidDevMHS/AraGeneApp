@@ -73,6 +73,7 @@ fun Planner(
     val phoneNum by viewModelDataStore.userPhoneNumber.collectAsState(initial = "")
     var itemsList by remember { mutableStateOf(emptyList<PlannerItem>()) }
     var hour by remember { mutableIntStateOf(0) }
+    var minute by remember { mutableIntStateOf(0) }
 
     val gradientBox = Brush.horizontalGradient(
         colors = listOf(
@@ -115,6 +116,7 @@ fun Planner(
             if (diff > 0) {
                 val diffInSeconds = diff / 1000
                 val diffInMinutes = diffInSeconds / 60
+                minute =diffInMinutes.toInt()
                 hour = (diffInMinutes / 60).toInt()
 
             }
@@ -137,7 +139,7 @@ fun Planner(
 
                     // متن تاریخ وسط خط
                     Text(
-                        text = "تا $hour ساعت دیگر ",
+                        text = if (hour>1) "تا $hour ساعت دیگر " else " تا $minute دقیقه دیگر",
                         style = MaterialTheme.typography.bodySmall,
                         color = colorResource(R.color.blue_logo),
                         modifier = Modifier.padding(start = 5.dp, end = 5.dp)

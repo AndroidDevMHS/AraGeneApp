@@ -125,7 +125,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
             painter = painterResource(id = R.drawable.ic_phone_vib),
             contentDescription = "",
             modifier = Modifier
-                .height(160.dp)
+                .height(150.dp)
                 .width(160.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -134,7 +134,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
             text = "آراژنی عزیز لطفا شماره تلفن همراه خود را وارد کنید",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 20.sp
+            fontSize = 18.sp
         )
 
         Spacer(modifier = Modifier.height(16.dp))

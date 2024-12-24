@@ -111,7 +111,7 @@ fun OtpAuthScreen(
             painter = painterResource(id = R.drawable.ic_phone_sms),
             contentDescription = "pic",
             modifier = Modifier
-                .height(160.dp)
+                .height(150.dp)
                 .width(170.dp),
         )
         Spacer(modifier = Modifier.height(14.dp))
@@ -119,7 +119,7 @@ fun OtpAuthScreen(
             text = "کد پیامک شده به شماره $phoneNumber را وارد کنید",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
 
             )
         val isOtpFilled = otpValues.all { it.isNotEmpty() }
@@ -145,7 +145,7 @@ fun OtpAuthScreen(
                     },
                     modifier = Modifier
                         .size(65.dp)
-                        .padding(1.dp)
+                        .padding(3.dp)
                         .focusRequester(focusRequesters[index]),
                     textStyle = TextStyle(fontSize = 18.sp, textAlign = TextAlign.Center),
                     keyboardOptions = KeyboardOptions.Default.copy(
