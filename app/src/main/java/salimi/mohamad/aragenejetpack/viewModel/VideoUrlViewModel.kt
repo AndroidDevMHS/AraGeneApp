@@ -39,6 +39,13 @@ class VideoUrlViewModel @Inject constructor(
     private val _articleState = MutableStateFlow<ArticleState>(ArticleState.Loading)
     val articleState: StateFlow<ArticleState> get() = _articleState
 
+    private val _selectedArticle = MutableStateFlow<Sheet2?>(null)
+    val selectedArticle: StateFlow<Sheet2?> = _selectedArticle
+
+    fun selectArticle(article: Sheet2) {
+        _selectedArticle.value = article
+    }
+
     fun sendRequest() {
         viewModelScope.launch(Dispatchers.IO) {
             _videoState.value = VideoUrlState.Loading

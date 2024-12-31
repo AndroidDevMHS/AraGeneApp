@@ -83,13 +83,20 @@ fun VideoShow(
 
     when (val state = videoU) {
         is VideoUrlState.Loading -> {
-
-            CircularProgressIndicator()
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+            }
         }
+
         is VideoUrlState.Error -> {
             // نمایش پیغام خطا
             Text("خطا: ${state.message}")
         }
+
         is VideoUrlState.Success -> {
             // وقتی که داده‌ها با موفقیت دریافت شده‌اند
             // لینک‌ها و تایتل‌ها را از state استخراج می‌کنیم
@@ -104,14 +111,14 @@ fun VideoShow(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 itemsIndexed(videoUrls) { index, link ->
-                        ButtonShow(painterResource(R.drawable.video_player), txtButton[index]) {
-                            selectedVideoUrl = link
-                            showDialog = true
-                        }
+                    ButtonShow(painterResource(R.drawable.video_player), txtButton[index]) {
+                        selectedVideoUrl = link
+                        showDialog = true
                     }
                 }
             }
         }
+    }
 
     if (showDialog && selectedVideoUrl != null) {
         VideoDialog(videoUrl = selectedVideoUrl!!) {
@@ -144,7 +151,8 @@ fun ButtonShow(image: Painter, text: String, onClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.onSecondary)
-                .fillMaxSize().padding(10.dp)
+                .fillMaxSize()
+                .padding(10.dp)
                 .clip(RoundedCornerShape(12.dp)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

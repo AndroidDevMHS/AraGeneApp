@@ -14,5 +14,6 @@ sealed class Screens(val route:String) {
     data object VideoShow:Screens(route = "videoShow")
     data object Article:Screens(route = "Article")
     data object SuperMix:Screens(route = "SuperMix")
+    data object ArticleTxtShow:Screens(route = "ArticleTxtShow")
 
 }

@@ -24,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,9 +44,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import salimi.mohamad.aragenejetpack.R
@@ -55,14 +51,13 @@ import salimi.mohamad.aragenejetpack.data.model.BtnNavItem
 import salimi.mohamad.aragenejetpack.screens.About
 import salimi.mohamad.aragenejetpack.screens.AccountScreen
 import salimi.mohamad.aragenejetpack.screens.Article
+import salimi.mohamad.aragenejetpack.screens.ArticleTxtShow
 import salimi.mohamad.aragenejetpack.screens.FahliCheckList
 import salimi.mohamad.aragenejetpack.screens.FahliMainHelp
-
 import salimi.mohamad.aragenejetpack.screens.Home
 import salimi.mohamad.aragenejetpack.screens.Planner
 import salimi.mohamad.aragenejetpack.screens.SuperMixScreen
 import salimi.mohamad.aragenejetpack.screens.VideoShow
-import salimi.mohamad.aragenejetpack.screens.isItemAdded
 import salimi.mohamad.aragenejetpack.screens.login.LoginScreen
 import salimi.mohamad.aragenejetpack.screens.login.OtpAuthScreen
 import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
@@ -92,9 +87,9 @@ fun SetupNavGraph(
     val currentDestination = navBackStackEntry?.destination?.route
 
     LaunchedEffect(Unit) {
-        viewModelPlanner.allMessage.collectLatest { item->
-            if(item.isEmpty()){
-                badge=true
+        viewModelPlanner.allMessage.collectLatest { item ->
+            if (item.isEmpty()) {
+                badge = true
             }
         }
     }
@@ -111,7 +106,7 @@ fun SetupNavGraph(
                     currentDestination == Screens.Account.route ||
                     currentDestination == Screens.Planner.route
                 ) {
-                    BottomNavigationBar(navController = navController,badge)
+                    BottomNavigationBar(navController = navController, badge)
                 }
             }
         ) { innerPadding ->
@@ -120,6 +115,7 @@ fun SetupNavGraph(
                 startDestination = startDestination,
                 modifier = Modifier
                     .padding(innerPadding)
+
             ) {
                 composable(route = Screens.Home.route) {
                     Home(navController)
@@ -191,18 +187,24 @@ fun SetupNavGraph(
                     VideoShow(navController, viewModel = viewModelVideoUrl)
                 }
                 composable(Screens.Article.route) {
-                    Article(navController,viewModelVideoUrl)
+                    Article(navController, viewModelVideoUrl)
                 }
                 composable(Screens.SuperMix.route) {
                     SuperMixScreen()
+                }
+                composable(
+                    route = Screens.ArticleTxtShow.route
+                ) {
+                    ArticleTxtShow(viewModelVideoUrl)
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun BottomNavigationBar(navController: NavController,badge:Boolean) {
+fun BottomNavigationBar(navController: NavController, badge: Boolean) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
     val items = listOf(
         BtnNavItem(
