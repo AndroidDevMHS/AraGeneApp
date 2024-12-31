@@ -50,7 +50,7 @@ class NotificationWorker @AssistedInject constructor(
             return Result.failure()
         }
         val ta = Calendar.getInstance()
-        ta.add(Calendar.MINUTE, 2)
+        ta.add(Calendar.MINUTE, 15)
 
         sendNotification(message, groupId, context)
 
@@ -122,7 +122,7 @@ fun scheduleNotifications(
         //calendar.add(Calendar.DAY_OF_YEAR, day)
         //calendar.add(Calendar.HOUR_OF_DAY, 0)
         calendar.add(Calendar.MINUTE,0)
-        calendar.add(Calendar.SECOND, 30+day)
+        calendar.add(Calendar.SECOND, 40+day)
         calendar.set(Calendar.MILLISECOND, 0)
 
 

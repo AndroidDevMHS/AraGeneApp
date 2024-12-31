@@ -69,6 +69,7 @@ import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
 import salimi.mohamad.aragenejetpack.viewModel.PlannerViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
+import salimi.mohamad.aragenejetpack.viewModel.VideoUrlViewModel
 
 
 @Composable
@@ -77,7 +78,8 @@ fun SetupNavGraph(
     viewModelSms: SmsViewModel,
     viewModelDataStore: DataStoreViewModel,
     viewModelDataBase: FahliCheckDbViewModel,
-    viewModelPlanner: PlannerViewModel
+    viewModelPlanner: PlannerViewModel,
+    viewModelVideoUrl: VideoUrlViewModel
 ) {
     val startDestination = viewModelDataStore.getUserLoginState().let {
         if (it) Screens.Home.route else Screens.Login.route
@@ -186,10 +188,10 @@ fun SetupNavGraph(
                     )
                 }
                 composable(Screens.VideoShow.route) {
-                    VideoShow(navController)
+                    VideoShow(navController, viewModel = viewModelVideoUrl)
                 }
                 composable(Screens.Article.route) {
-                    Article()
+                    Article(navController,viewModelVideoUrl)
                 }
                 composable(Screens.SuperMix.route) {
                     SuperMixScreen()

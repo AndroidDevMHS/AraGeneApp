@@ -13,31 +13,34 @@ import retrofit2.Callback
 import retrofit2.Response
 import salimi.mohamad.aragenejetpack.data.model.SmsRequest
 import salimi.mohamad.aragenejetpack.data.remote.ApiInterface
+import salimi.mohamad.aragenejetpack.data.repository.SmsRepository
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class SmsViewModel @Inject constructor(
+    private val apiInterface: SmsRepository,
 
-    private val apiInterface: ApiInterface,
-
-) : ViewModel() {
+    ) : ViewModel() {
 
     fun sendSms(sms: SmsRequest) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = apiInterface.sendSms(
-                sms.userName,
-                sms.password,
-                sms.fromNumber,
-                sms.toNumbers,
-                sms.messageContent
+                SmsRequest(
+                    sms.userName,
+                    sms.password,
+                    sms.fromNumber,
+                    sms.toNumbers,
+                    sms.messageContent
+                )
             )
-            response.enqueue(object :Callback<Int>{
+            response.enqueue(object : Callback<Int> {
                 override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                    Log.e("3636",response.body().toString())
+                    Log.e("3636", response.body().toString())
                 }
 
                 override fun onFailure(call: Call<Int>, t: Throwable) {
-                    Log.e("3636",t.toString())
+                    Log.e("3636", t.toString())
                 }
 
             })

@@ -3,15 +3,23 @@ package salimi.mohamad.aragenejetpack.data.repository
 import salimi.mohamad.aragenejetpack.data.model.SmsRequest
 import salimi.mohamad.aragenejetpack.data.remote.ApiInterface
 import javax.inject.Inject
+import javax.inject.Named
 
 class SmsRepository @Inject constructor(
-    private val api: ApiInterface
+
+    @Named("BaseApi") private val smsApi: ApiInterface,
+    @Named("VideoApi") private val videoApi: ApiInterface
+
 ) {
-    suspend fun sendSms(smsRequest: SmsRequest) = api.sendSms(
+    suspend fun sendSms(smsRequest: SmsRequest) = smsApi.sendSms(
         username = smsRequest.userName,
         password = smsRequest.password,
         from = smsRequest.fromNumber,
         to = smsRequest.toNumbers,
         text = smsRequest.messageContent
     )
+
+    suspend fun videoUrl()=videoApi.videoUrl()
+
+    suspend fun articleTxt()=videoApi.getArticles()
 }

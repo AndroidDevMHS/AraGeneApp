@@ -18,6 +18,7 @@ import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
 import salimi.mohamad.aragenejetpack.viewModel.PlannerViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
+import salimi.mohamad.aragenejetpack.viewModel.VideoUrlViewModel
 
 
 lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
             val viewModelDataStore by viewModels<DataStoreViewModel>()
             val viewModelDataBase by viewModels<FahliCheckDbViewModel>()
             val viewModelPlanner by viewModels<PlannerViewModel>()
+            val viewModelVideoUrl by viewModels<VideoUrlViewModel>()
 
 
 
@@ -60,7 +62,8 @@ class MainActivity : ComponentActivity() {
                     viewModelSms,
                     viewModelDataStore,
                     viewModelDataBase,
-                    viewModelPlanner
+                    viewModelPlanner,
+                    viewModelVideoUrl
                 )
             }
 

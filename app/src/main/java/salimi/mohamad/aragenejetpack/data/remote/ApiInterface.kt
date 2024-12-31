@@ -2,13 +2,10 @@ package salimi.mohamad.aragenejetpack.data.remote
 
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Query
-import salimi.mohamad.aragenejetpack.data.model.GetCreditResponse
-import salimi.mohamad.aragenejetpack.data.model.SendSmsResponse
-import salimi.mohamad.aragenejetpack.data.model.SmsRequest
+import salimi.mohamad.aragenejetpack.data.model.ArticleRes
+import salimi.mohamad.aragenejetpack.data.model.VideoUrlResponseWrapper
 
 interface ApiInterface {
 
@@ -19,8 +16,11 @@ interface ApiInterface {
         @Query("from") from: String,
         @Query("to") to: String,
         @Query("text") text: String
-    ): Call<Int> // اگر نیاز به بررسی پاسخ دارید، نوع داده را به طور مناسب تغییر دهید.
+    ): Call<Int>
 
-    @POST("GetCredit")
-    fun getCredit(@Body credentials: Map<String, String>): Call<GetCreditResponse>
+    @GET("41f95f01143ca4a4b46b6cc92b1d07b6/videouRl/sheet1")
+    suspend fun videoUrl(): Response<VideoUrlResponseWrapper>
+
+    @GET("41f95f01143ca4a4b46b6cc92b1d07b6/appUrl/sheet2")
+    suspend fun getArticles(): ArticleRes
 }
