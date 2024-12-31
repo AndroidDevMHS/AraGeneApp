@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
 
             AraGeneJetPackTheme {
+
                 if (dPermission.value) {
                     PublicDialog(
                         { dPermission.value = false },
