@@ -56,6 +56,7 @@ import salimi.mohamad.aragenejetpack.screens.FahliCheckList
 import salimi.mohamad.aragenejetpack.screens.FahliMainHelp
 import salimi.mohamad.aragenejetpack.screens.Home
 import salimi.mohamad.aragenejetpack.screens.Planner
+import salimi.mohamad.aragenejetpack.screens.SuperMixFormulaScreen
 import salimi.mohamad.aragenejetpack.screens.SuperMixScreen
 import salimi.mohamad.aragenejetpack.screens.VideoShow
 import salimi.mohamad.aragenejetpack.screens.login.LoginScreen
@@ -196,6 +197,11 @@ fun SetupNavGraph(
                     route = Screens.ArticleTxtShow.route
                 ) {
                     ArticleTxtShow(viewModelVideoUrl)
+                }
+                composable(
+                    route = Screens.SuperMixCalculator.route
+                ) {
+                    SuperMixFormulaScreen()
                 }
             }
         }

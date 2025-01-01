@@ -120,6 +120,13 @@ fun Home(navController: NavController) {
             }
 
             MainScreenItemNo(
+                image = painterResource(R.drawable.scales),
+                text = "محاسبه\u200Cگر جیره مصرفی روزانه سوپرمیکس",
+                navController = navController,
+                page = Screens.SuperMixCalculator.route
+            )
+
+            MainScreenItemNo(
                 image = painterResource(R.drawable.planner),
                 text = "چک لیست همزمان سازی",
                 navController = navController,
@@ -193,7 +200,7 @@ fun MainScreenItemNo(image: Painter, text: String, page: String, navController: 
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
             .fillMaxWidth()
-            .height(140.dp)
+            .height(120.dp)
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp), clip = true),
         onClick = { navController.navigate(page) }
 
@@ -208,7 +215,7 @@ fun MainScreenItemNo(image: Painter, text: String, page: String, navController: 
 
             ) {
             Image(
-                modifier = Modifier.size(80.dp),
+                modifier = Modifier.size(60.dp),
                 painter = image,
                 contentDescription = "superMix"
             )

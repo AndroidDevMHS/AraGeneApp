@@ -2,13 +2,14 @@ package salimi.mohamad.aragenejetpack.screens
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.media.Image
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,8 +22,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -729,5 +734,84 @@ fun ChangeNumber(onDismiss: () -> Unit, viewModel: SmsViewModel, dataStore: Data
 
         }
 
+    }
+}
+
+@Composable
+fun Spinner(
+    items: List<List<Int>>, // هر سطر شامل یک لیست از اعداد است
+    selectedItem: Int,
+    onItemSelected: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .height(56.dp)
+            .border(
+                width = 1.dp,
+                shape = RoundedCornerShape(5.dp),
+                color = colorResource(R.color.blue_logo2)
+            )
+            .clickable { expanded = !expanded }
+            .padding(12.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(0.5f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                if (expanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
+                contentDescription = null,
+                tint = colorResource(R.color.green_logo),
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = selectedItem.toString(),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .background(color = Color.White, shape = RoundedCornerShape(6.dp))
+                .padding(start = 12.dp, end = 12.dp)
+        ) {
+            items.forEach { rowItems ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    rowItems.forEach { item ->
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .clickable {
+                                    onItemSelected(item)
+                                    expanded = false
+                                }
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = item.toString(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = colorResource(R.color.black)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
