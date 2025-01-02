@@ -82,6 +82,7 @@ fun VideoShow(
     var showDialog by remember { mutableStateOf(false) }
 
     when (val state = videoU) {
+
         is VideoUrlState.Loading -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -93,8 +94,20 @@ fun VideoShow(
         }
 
         is VideoUrlState.Error -> {
-            // نمایش پیغام خطا
-            Text("خطا: ${state.message}")
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "خطا در دریافت اطلاعات\nلطفا اینترنت خود را چک کنید",
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = colorResource(R.color.royal_red),
+                    fontFamily = FontFamily(Font(R.font.sans_bold)),
+                    style = TextStyle(textDirection = TextDirection.Rtl)
+                )
+            }
         }
 
         is VideoUrlState.Success -> {
@@ -102,7 +115,6 @@ fun VideoShow(
             // لینک‌ها و تایتل‌ها را از state استخراج می‌کنیم
             val videoUrls = state.videos.map { it.link.replace("\"", "") }
             val txtButton = state.videos.map { it.title }
-
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2), // تعداد ستون‌ها را به ۲ تنظیم می‌کنیم
                 modifier = Modifier

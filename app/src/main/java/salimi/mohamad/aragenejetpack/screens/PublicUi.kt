@@ -2,6 +2,7 @@ package salimi.mohamad.aragenejetpack.screens
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -76,6 +77,7 @@ import salimi.mohamad.aragenejetpack.utils.loginSms
 import salimi.mohamad.aragenejetpack.utils.randomFourDigitNumber
 import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
+
 
 @SuppressLint("InlinedApi")
 
@@ -326,7 +328,11 @@ fun InternetAlertDialog(onDismiss: () -> Unit) {
                     TextButton(
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         onClick = {
-                            val intent = Intent(Settings.ACTION_DATA_USAGE_SETTINGS)
+                            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                Intent(Settings.ACTION_DATA_USAGE_SETTINGS)
+                            } else {
+                                Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
+                            }
                             context.startActivity(intent)
                         }
                     ) {
@@ -740,14 +746,14 @@ fun ChangeNumber(onDismiss: () -> Unit, viewModel: SmsViewModel, dataStore: Data
 @Composable
 fun Spinner(
     items: List<List<Int>>, // هر سطر شامل یک لیست از اعداد است
-    selectedItem: Int,
-    onItemSelected: (Int) -> Unit
+    selectedItem: String,
+    onItemSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier
-            .height(56.dp)
+        modifier = Modifier.fillMaxWidth(0.55f)
+            .height(55.dp)
             .border(
                 width = 1.dp,
                 shape = RoundedCornerShape(5.dp),
@@ -758,7 +764,7 @@ fun Spinner(
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(0.5f),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -769,15 +775,15 @@ fun Spinner(
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                text = selectedItem.toString(),
+                text = selectedItem,
                 style = MaterialTheme.typography.bodyLarge,
+                fontSize = 17.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
 
         }
-
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -797,7 +803,7 @@ fun Spinner(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
                                 .clickable {
-                                    onItemSelected(item)
+                                    onItemSelected(item.toString())
                                     expanded = false
                                 }
                                 .padding(8.dp),
@@ -805,7 +811,8 @@ fun Spinner(
                         ) {
                             Text(
                                 text = item.toString(),
-                                style = MaterialTheme.typography.bodySmall,
+                                fontSize = 18.sp,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = colorResource(R.color.black)
                             )
                         }

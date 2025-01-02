@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -88,15 +89,20 @@ fun Article(navController: NavController, viewModel: VideoUrlViewModel) {
         }
 
         is ArticleState.Error -> {
-            val errorMessage = (articleState as ArticleState.Error).message
-            Text(
-                text = "خطا در دریافت مقالات: $errorMessage",
-                color = Color.Red,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "خطا در دریافت اطلاعات\nلطفا اینترنت خود را چک کنید",
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = colorResource(R.color.royal_red),
+                    fontFamily = FontFamily(Font(R.font.sans_bold)),
+                    style = TextStyle(textDirection = TextDirection.Rtl)
+                )
+            }
         }
     }
 }

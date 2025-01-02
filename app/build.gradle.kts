@@ -116,4 +116,6 @@ dependencies {
     ksp (libs.androidx.hilt.compiler)
 
     implementation ("com.google.firebase:firebase-inappmessaging-display:21.0.1")
+    implementation ("com.google.firebase:firebase-analytics:21.0.0")
+
 }

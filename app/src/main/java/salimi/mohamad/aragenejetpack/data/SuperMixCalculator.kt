@@ -1,18 +1,27 @@
 package salimi.mohamad.aragenejetpack.data
 
+import android.util.Log
+import androidx.compose.ui.graphics.StrokeCap.Companion.Round
+import androidx.compose.ui.graphics.StrokeJoin.Companion.Round
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.ceil
+import kotlin.math.round
 
-fun superMixCalculator(count: Int, day: Int, weight: Int): List<Any> {
+
+fun superMixCalculator(count: Int, day: Int, weight: Int): List<Float> {
 
     fun dailyUsage(weight: Int) = (weight * 0.04)
-    val fullDailyI5 = count * dailyUsage(weight) /// تا روز 8ام
+    val fullDailyI5 = count * dailyUsage(weight).toFloat() /// تا روز 8ام
     val weight2L12 = (((fullDailyI5 / count) / 8) * 7) + weight// وزن 2ام
-    val fullDailyI12 = count * dailyUsage(weight2L12.toInt())
-    val weight3L19 = (((fullDailyI12 / count) / 7) * 7) + weight2L12// تا روز19 ام
-    val fullDailyI19 = count * dailyUsage(weight2L12.toInt())
-    val weight3L25 = (((fullDailyI19 / count) / 5.5) * 7) + weight3L19// تا روز19 ام
-    val fullDailyI25 = count * dailyUsage(weight3L19.toInt())
-    val weight3L29 = (((fullDailyI25 / count) / 5.5) * 7) + weight3L25// تا روز19 ام
-    val fullDailyI29 = count * dailyUsage(weight3L25.toInt())
+    val fullDailyI12 = count * dailyUsage(weight2L12.toInt()).toFloat()
+    val weight3L19 = ceil((((fullDailyI12 / count) / 7) * 7) + weight2L12)// تا روز19 ام
+    val fullDailyI19 = count * dailyUsage(weight3L19.toInt()).toFloat()
+    val weight3L25 = ceil((((fullDailyI19 / count) / 5.5) * 7) + weight3L19)// تا روز19 ام
+    val fullDailyI25 = count * dailyUsage(weight3L25.toInt()).toFloat()
+    val weight3L29 = ceil((((fullDailyI25 / count) / 5.5) * 7) + weight3L25)// تا روز19 ام
+    val fullDailyI29 = count * dailyUsage(weight3L29.toInt())
+
     val consanterePer = listOf(
         0.07,
         0.07,
@@ -41,6 +50,7 @@ fun superMixCalculator(count: Int, day: Int, weight: Int): List<Any> {
         0.95,
         0.95
     )
+
     val younjePer = listOf(
         0.93,
         0.93,
@@ -70,50 +80,49 @@ fun superMixCalculator(count: Int, day: Int, weight: Int): List<Any> {
         0.05
     )
 
-
-    val (fullDaily, pair) = when (day) {
-        in 1..7 ->
-            Pair(
-                fullDailyI5,
-                Pair(
-                    fullDailyI5 * consanterePer[day - 1],
-                    fullDailyI5 * younjePer[day - 1]
-                )
-            )
-
-        in 8..14 ->
-            Pair(
-                fullDailyI12,
-                Pair(
-                    fullDailyI12 * consanterePer[day - 1],
-                    fullDailyI12 * younjePer[day - 1]
-                )
-            )
-
-        in 15..20 ->
-            Pair(
-                fullDailyI19,
-                Pair(
-                    fullDailyI19 * consanterePer[day - 1],
-                    fullDailyI19 * younjePer[day - 1]
-                )
-            )
-
-        in 21..24 -> Pair(
-            fullDailyI25,
-            Pair(
-                fullDailyI25 * consanterePer[day - 1],
-                fullDailyI25 * younjePer[day - 1]
-            )
+    val (fullDaily: Float, cons: Float, younj: Float) = when (day) {
+        in 1..7 -> Triple(
+            fullDailyI5.toFloat(),
+            (fullDailyI5 * consanterePer[day - 1]).toFloat(),
+            (fullDailyI5 * younjePer[day - 1]).toFloat()
         )
 
-        else -> Pair(
-            fullDailyI29,
-            Pair(
-                fullDailyI29 + consanterePer[day - 1],
-                fullDailyI29 + younjePer[day - 1]
-            )
+        in 8..14 -> Triple(
+            fullDailyI12.toFloat(),
+            (fullDailyI12 * consanterePer[day - 1]).toFloat(),
+            (fullDailyI12 * younjePer[day - 1]).toFloat()
+        )
+
+        in 15..20 -> Triple(
+            fullDailyI19.toFloat(),
+            (fullDailyI19 * consanterePer[day - 1]).toFloat(),
+            (fullDailyI19 * younjePer[day - 1]).toFloat()
+        )
+
+       /* in 21..24 -> Triple(
+            fullDailyI25.toFloat(),
+            (fullDailyI25 * consanterePer[day - 1]).toFloat(),
+            (fullDailyI25 * younjePer[day - 1]).toFloat()
+        )*/
+
+        else -> Triple(
+            fullDailyI29.toFloat(),
+            (fullDailyI29 * consanterePer[day - 1]).toFloat(),
+            (fullDailyI29 * younjePer[day - 1]).toFloat()
         )
     }
-    return listOf(fullDaily, pair)
+    Log.e("3030", "fullDaily $fullDaily cons $cons yonj $younj w1 $weight2L12 w2 $weight3L19 w3 $weight3L25 w4 $weight3L29")
+// بازگشت مقادیر به‌صورت لیست
+    return listOf(roundTwo( fullDaily), roundTwo(cons), roundTwo(younj))
+}
+
+fun roundOne(number: Float): Float {
+    val number1 = BigDecimal("$number")
+    val roundedNumber = number1.setScale(1, RoundingMode.HALF_UP)
+    return roundedNumber.toFloat()
+}
+fun roundTwo(number: Float): Float {
+    val number1 = BigDecimal("$number")
+    val roundedNumber = number1.setScale(2, RoundingMode.HALF_UP)
+    return roundedNumber.toFloat()
 }
