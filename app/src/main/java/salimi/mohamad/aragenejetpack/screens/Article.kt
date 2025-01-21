@@ -66,6 +66,7 @@ fun Article(navController: NavController, viewModel: VideoUrlViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentSize(Alignment.Center)
+                    .size(80.dp)
             )
         }
 

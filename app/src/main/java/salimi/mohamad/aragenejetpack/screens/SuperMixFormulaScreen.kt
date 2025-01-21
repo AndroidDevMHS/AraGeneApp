@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import salimi.mohamad.aragenejetpack.R
+import salimi.mohamad.aragenejetpack.data.roundTwo
 import salimi.mohamad.aragenejetpack.data.superMixCalculator
 
 @Preview(
@@ -67,12 +68,14 @@ fun SuperMixFormulaScreen() {
     var full by remember { mutableFloatStateOf(0f) }
     var consantere by remember { mutableFloatStateOf(0f) }
     var younje by remember { mutableFloatStateOf(0f) }
-    val perCons = consantere / 3
-    val perYounj = younje / 3
+    val perCons = roundTwo(consantere / 3)
+    val perYounj = roundTwo( younje / 3)
     val keyboardController = LocalSoftwareKeyboardController.current
     val dayItem1 = listOf(
         listOf(30, 31, 32, 33, 34, 35),
-        listOf(36, 37, 38, 39, 40, 41), listOf(42, 43, 44, 45, 46, 47)
+        listOf(36, 37, 38, 39, 40, 41),
+        listOf(42, 43, 44, 45, 46, 47),
+        listOf(48, 49, 50, 51, 52, 53)
     )
     var selectedItemRem1 by remember { mutableStateOf("انتخاب کنید") }
 
@@ -80,9 +83,8 @@ fun SuperMixFormulaScreen() {
         listOf(1, 2, 3, 4, 5),
         listOf(6, 7, 8, 9, 10),
         listOf(11, 12, 13, 14, 15),
-        listOf(16, 17, 18, 19, 20),
-        listOf(21, 22, 23, 24, 25),
-        listOf(26)
+        listOf(16, 17, 18, 19, 20)
+
     )
     var selectedItemRem2 by remember { mutableStateOf("انتخاب کنید") }
     Column(
@@ -289,11 +291,11 @@ fun SuperMixFormulaScreen() {
                 withStyle(style = SpanStyle(color = colorResource(R.color.royal_red))) {
                     append(selectedItemRem2)
                 }
-                append(" برای تعداد ")
+                append("ام برای تعداد ")
                 withStyle(style = SpanStyle(color = colorResource(R.color.royal_red))) {
                     append(count)
                 }
-                append(" راس دام برابر با ")
+                append(" راس گوسفند برابر با ")
                 withStyle(style = SpanStyle(color = colorResource(R.color.royal_red))) {
                     append("$full")
                 }
@@ -356,12 +358,12 @@ fun SuperMixFormulaScreen() {
                             modifier = Modifier.padding(12.dp)
                         )
                         Text(
-                            text = "وعده صبح: ",
+                            text = "صبح: ",
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Center,
                             style = TextStyle(textDirection = TextDirection.Rtl),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             modifier = Modifier.padding(12.dp)
                         )
 
@@ -382,12 +384,12 @@ fun SuperMixFormulaScreen() {
                             modifier = Modifier.padding(12.dp)
                         )
                         Text(
-                            text = "وعده ناهار: ",
+                            text = "ناهار: ",
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Center,
                             style = TextStyle(textDirection = TextDirection.Rtl),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             modifier = Modifier.padding(12.dp)
                         )
 
@@ -409,12 +411,12 @@ fun SuperMixFormulaScreen() {
                             modifier = Modifier.padding(12.dp)
                         )
                         Text(
-                            text = "وعده شام: ",
+                            text = "شام: ",
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Center,
                             style = TextStyle(textDirection = TextDirection.Rtl),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             modifier = Modifier.padding(12.dp)
                         )
                     }

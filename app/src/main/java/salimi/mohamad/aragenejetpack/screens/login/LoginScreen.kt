@@ -178,6 +178,8 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
                     focusedBorderColor = colorResource(R.color.blue2_logo),
                     focusedLabelColor = colorResource(R.color.blue2_logo),
                     cursorColor = colorResource(R.color.blue2_logo), disabledSuffixColor = colorResource(R.color.blue2_logo),
+                    focusedTextColor = colorResource(R.color.black),
+                    unfocusedTextColor = colorResource(R.color.black)
                 )
             )
 

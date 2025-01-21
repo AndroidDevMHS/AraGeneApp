@@ -93,9 +93,8 @@ dependencies {
     implementation(libs.androidx.datastore)
 
     implementation(libs.coil.compose)
-    //play-services-auth = { module = "com.google.android.gsm:play-services-auth", version.ref = "playServicesAuth" }
-    //implementation(libs.play.services.auth)
     implementation(libs.play.services.auth.api.phone)
+
     //dataStore
     implementation(libs.androidx.datastore.preferences)
     implementation (libs.androidx.work.runtime.ktx)
@@ -115,7 +114,9 @@ dependencies {
     implementation (libs.androidx.hilt.work)
     ksp (libs.androidx.hilt.compiler)
 
-    implementation ("com.google.firebase:firebase-inappmessaging-display:21.0.1")
-    implementation ("com.google.firebase:firebase-analytics:21.0.0")
+    implementation (libs.firebase.inappmessaging.display)
+    implementation (libs.firebase.analytics)
+
+    implementation ("com.github.codegamez:aparat-view:0.0.6")
 
 }
