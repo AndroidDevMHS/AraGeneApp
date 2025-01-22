@@ -1,5 +1,6 @@
 package salimi.mohamad.aragenejetpack.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -7,17 +8,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import salimi.mohamad.aragenejetpack.data.model.Sheet1
 import salimi.mohamad.aragenejetpack.data.model.Sheet2
-import salimi.mohamad.aragenejetpack.data.model.VideoUrlResponse
-import salimi.mohamad.aragenejetpack.data.remote.ApiInterface
-import salimi.mohamad.aragenejetpack.data.repository.SmsRepository
+import salimi.mohamad.aragenejetpack.data.repository.UrlApiRepository
 import javax.inject.Inject
-import javax.inject.Named
 
-sealed class VideoUrlState {
-    data object Loading : VideoUrlState()
-    data class Success(val videos: List<VideoUrlResponse>) : VideoUrlState()
-    data class Error(val message: String) : VideoUrlState()
+sealed class UrlState {
+    data object Loading : UrlState()
+    data class Success(val videos: List<Sheet1>) : UrlState()
+    data class Error(val message: String) : UrlState()
 }
 
 sealed class ArticleState {
@@ -28,12 +27,12 @@ sealed class ArticleState {
 
 @HiltViewModel
 class VideoUrlViewModel @Inject constructor(
-     private val repositoryApi: SmsRepository
+     private val repositoryApi: UrlApiRepository
 ) : ViewModel() {
 
     // Video state
-    private val _videoState = MutableStateFlow<VideoUrlState>(VideoUrlState.Loading)
-    val videoState: StateFlow<VideoUrlState> get() = _videoState
+    private val _videoState = MutableStateFlow<UrlState>(UrlState.Loading)
+    val videoState: StateFlow<UrlState> get() = _videoState
 
     // Article state
     private val _articleState = MutableStateFlow<ArticleState>(ArticleState.Loading)
@@ -48,31 +47,22 @@ class VideoUrlViewModel @Inject constructor(
 
     fun sendRequest() {
         viewModelScope.launch(Dispatchers.IO) {
-            _videoState.value = VideoUrlState.Loading
-            try {
-                val response = repositoryApi.videoUrl()
-                if (response.isSuccessful) {
-                    val videos = response.body()?.sheet1 ?: emptyList()
-                    _videoState.value = VideoUrlState.Success(videos)
-                } else {
-                    val errorMessage = response.errorBody()?.string() ?: "خطای نامشخص"
-                    _videoState.value = VideoUrlState.Error("خطا در دریافت داده: $errorMessage")
-                }
-            } catch (e: Exception) {
-                _videoState.value = VideoUrlState.Error("خطا: ${e.message}")
-            }
-        }
-    }
-
-    // Fetch articles
-    fun fetchArticles() {
-        viewModelScope.launch(Dispatchers.IO) {
+            _videoState.value = UrlState.Loading
             _articleState.value = ArticleState.Loading
             try {
-                val response = repositoryApi.articleTxt()
-                _articleState.value = ArticleState.Success(response.sheet2)
+                val response = repositoryApi.urlApi()
+                if (response.isSuccessful) {
+                    val videos = response.body()?.sheet1?: emptyList()
+                    val article=response.body()?.sheet2?: emptyList()
+                    Log.e("3030", "Body: ${response.body()}")
+                    _videoState.value = UrlState.Success(videos)
+                    _articleState.value=ArticleState.Success(article)
+                } else {
+                    val errorMessage = response.errorBody()?.string() ?: "خطای نامشخص"
+                    _videoState.value = UrlState.Error("خطا در دریافت داده: $errorMessage")
+                }
             } catch (e: Exception) {
-                _articleState.value = ArticleState.Error("خطا: ${e.message}")
+                _videoState.value = UrlState.Error("خطا: ${e.message}")
             }
         }
     }

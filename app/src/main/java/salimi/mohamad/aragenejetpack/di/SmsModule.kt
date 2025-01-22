@@ -8,9 +8,9 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import salimi.mohamad.aragenejetpack.data.remote.ApiInterface
-import salimi.mohamad.aragenejetpack.data.repository.SmsRepository
+import salimi.mohamad.aragenejetpack.data.remote.ApiInterfaceUrl
 import salimi.mohamad.aragenejetpack.utils.Constants.BASE_URL
-import salimi.mohamad.aragenejetpack.utils.Constants.BASE_URL_VIDEO
+import salimi.mohamad.aragenejetpack.utils.Constants.URL_API
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -21,6 +21,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    @Named("smsHttp")
     fun provideOkHttpClient(): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)
@@ -31,7 +32,7 @@ object NetworkModule {
     @Singleton
     @Provides
     @Named("BaseRetrofit")
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
+    fun provideRetrofit(@Named("smsHttp")okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -39,6 +40,18 @@ object NetworkModule {
             .build()
 
     @Singleton
+    @Provides
+    @Named("BaseApi")
+    fun provideBaseApiInterface(@Named("BaseRetrofit") retrofit: Retrofit): ApiInterface =
+        retrofit.create(ApiInterface::class.java)
+
+
+
+
+
+
+
+   /* @Singleton
     @Provides
     @Named("VideoRetrofit")
     fun provideRetrofitVideo(okHttpClient: OkHttpClient): Retrofit =
@@ -67,5 +80,5 @@ object NetworkModule {
         @Provides
         @Named("VideoApi")
         fun provideVideoApiInterface(@Named("VideoRetrofit") retrofit: Retrofit): ApiInterface =
-            retrofit.create(ApiInterface::class.java)
+            retrofit.create(ApiInterface::class.java)*/
 }

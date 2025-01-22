@@ -55,7 +55,7 @@ fun Article(navController: NavController, viewModel: VideoUrlViewModel) {
 
 
     LaunchedEffect(Unit) {
-        viewModel.fetchArticles()
+        viewModel.sendRequest()
     }
 
 

@@ -107,16 +107,19 @@ dependencies {
     //PersianCalender
     implementation (libs.jalalicalendar)
     implementation (libs.persiandate)
-
+    
+    //HiltLIbrary
     implementation (libs.androidx.work.runtime.ktx)
     implementation (libs.android.hilt)
     ksp(libs.kapt.hilt)
     implementation (libs.androidx.hilt.work)
     ksp (libs.androidx.hilt.compiler)
 
+    //FirebaseLibrary
     implementation (libs.firebase.inappmessaging.display)
     implementation (libs.firebase.analytics)
 
-    implementation ("com.github.codegamez:aparat-view:0.0.6")
+    //AparatViewLibrary
+    implementation(libs.aparat.view)
 
 }

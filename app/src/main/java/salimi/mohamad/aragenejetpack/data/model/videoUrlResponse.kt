@@ -1,5 +1,6 @@
 package salimi.mohamad.aragenejetpack.data.model
 
+/*
 data class VideoUrlResponse(
     val link: String,
     val title: String,
@@ -8,4 +9,4 @@ data class VideoUrlResponse(
 
 data class VideoUrlResponseWrapper(
     val sheet1: List<VideoUrlResponse>
-)
+)*/
