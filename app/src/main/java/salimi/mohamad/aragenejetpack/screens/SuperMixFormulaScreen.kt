@@ -2,9 +2,6 @@ package salimi.mohamad.aragenejetpack.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,16 +84,18 @@ fun SuperMixFormulaScreen() {
 
     )
     var selectedItemRem2 by remember { mutableStateOf("انتخاب کنید") }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(intrinsicSize = IntrinsicSize.Min)
                 .padding(10.dp)
         ) {
             Column(
@@ -113,16 +112,12 @@ fun SuperMixFormulaScreen() {
                         .padding(vertical = 18.dp, horizontal = 12.dp),
                     text = "لطفا وزن شروع و روز پرواربندی را انتخاب کنید",
                     color = colorResource(R.color.white),
-                    textAlign = TextAlign.End,
+                    textAlign = TextAlign.Start,
                     fontFamily = FontFamily(Font(R.font.sans_bold)),
                     fontSize = 18.sp
                 )
-
-
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -132,17 +127,18 @@ fun SuperMixFormulaScreen() {
                             style = TextStyle(textDirection = TextDirection.Rtl),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             fontSize = 17.sp,
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier
+                                .fillMaxWidth(0.3f)
+                                .padding(12.dp)
                         )
                         Spinner(items = dayItem1, selectedItemRem1) {
                             selectedItemRem1 = it
                             show = false
                         }
                     }
-
+                Spacer(modifier = Modifier.height(10.dp))
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -152,18 +148,19 @@ fun SuperMixFormulaScreen() {
                             style = TextStyle(textDirection = TextDirection.Rtl),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             fontSize = 17.sp,
-                            modifier = Modifier.padding(30.dp)
+                            modifier = Modifier
+                                .fillMaxWidth(0.3f)
+                                .padding(12.dp)
                         )
                         Spinner(items = dayItem2, selectedItemRem2) {
                             selectedItemRem2 = it
                             show = false
                         }
                     }
-
+                Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         modifier = Modifier
-                            .height(55.dp)
-                            .fillMaxWidth(),
+                            .height(55.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
@@ -174,7 +171,9 @@ fun SuperMixFormulaScreen() {
                             style = TextStyle(textDirection = TextDirection.Rtl),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             fontSize = 17.sp,
-                            modifier = Modifier.padding(14.dp)
+                            modifier = Modifier
+                                .fillMaxWidth(0.3f)
+                                .padding(12.dp)
                         )
 
                         OutlinedTextField(
@@ -223,12 +222,8 @@ fun SuperMixFormulaScreen() {
                         )
                     }
                     Spacer(modifier = Modifier.height(20.dp))
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Box(
+
+                Box(
                             modifier = Modifier
                                 .clickable {
                                     keyboardController?.hide()
@@ -276,14 +271,12 @@ fun SuperMixFormulaScreen() {
 
                     }
                 }
-            }
             if (showError) {
                 PublicNoteDialog(image = painterResource(R.drawable.exclamation),
                     text = "لطفا تمامی موارد خواسته شده را وارد کنید و سپس اقدام به دریافت جیره نمایید",
                     title = "اطلاعات ناقص",
                     onDismiss = { showError = false })
-            }
-        }
+            }}
         Spacer(modifier = Modifier.height(2.dp))
         if (show) {
             val text = buildAnnotatedString {

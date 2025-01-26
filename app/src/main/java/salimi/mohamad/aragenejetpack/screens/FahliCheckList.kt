@@ -3,6 +3,7 @@
 package salimi.mohamad.aragenejetpack.screens
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -34,7 +35,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.sharp.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -95,9 +96,13 @@ fun FahliCheckList(
     var itemsList by remember { mutableStateOf(emptyList<FahliCheckList>()) }
     var addDialog by remember { mutableStateOf(false) }
     val welcomeMessage = remember { mutableStateOf(true) }
-
+    var showSelectedDay by remember { mutableStateOf(false) }
+    var selectedPackage by remember { mutableStateOf<Int?>(null) }
+    val sharedPreferences = remember {
+        context.getSharedPreferences("selectedPack", Context.MODE_PRIVATE)
+    }
     LaunchedEffect(Unit) {
-        welcomeMessage.value = viewModelDataStore.getUserWelcome()
+         welcomeMessage.value = viewModelDataStore.getUserWelcome()
     }
     LaunchedEffect(key1 = true) {
         viewModelDataBase.allCheckList.collectLatest { item ->
@@ -132,7 +137,7 @@ fun FahliCheckList(
                 }
                 ClickableText(
                     text = text,
-                    onClick = { addDialog = true },
+                    onClick = { showSelectedDay = true },
                     style = TextStyle(textAlign = TextAlign.Center)
                 )
             } else {
@@ -149,7 +154,11 @@ fun FahliCheckList(
             }
             FloatingActionButton(
                 onClick = {
-                    addDialog = true
+                    if (itemsList.isEmpty()) {
+                        showSelectedDay = true
+                    } else {
+                        addDialog = true
+                    }
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -159,9 +168,21 @@ fun FahliCheckList(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "افزودن",
-                    tint = colorResource(R.color.white) // رنگ آیکون)
+                    tint = colorResource(R.color.white)
                 )
             }
+        }
+        if (showSelectedDay) {
+            SelectDay(
+                onDismiss = {
+                    showSelectedDay = false
+                    addDialog = true
+                },
+                onSelection = { selected ->
+                    sharedPreferences.edit().putInt("packNumber", selected).apply()
+                    selectedPackage = selected
+                }
+            )
         }
         if (addDialog) {
             DialogForAdd({ addDialog = false }, viewModelDataBase, context)
@@ -510,7 +531,6 @@ fun DialogForAdd(
 @Composable
 fun WelcomeMessage(onDismiss: () -> Unit) {
     var currentIndex by remember { mutableIntStateOf(0) }
-
     val messages = listOf(
         "با فشردن علامت + \n گروه های میش هایی که می خواهید همزمان سازی کنید را وارد نمایید ",
         "فراموش نکنید که \nتاریخ شروع همزمان سازی را نیز وارد کنید تا اعلان های  مربوط به کارهای لازم الاجرا برای شما ارسال شود ",
@@ -533,7 +553,7 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
         ) {
             Row(
                 modifier = Modifier
-                    .background(color=MaterialTheme.colorScheme.onSecondary)
+                    .background(color = MaterialTheme.colorScheme.onSecondary)
                     .weight(0.9f)
             ) {
                 Column(
@@ -594,7 +614,8 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
             }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth().background(color=MaterialTheme.colorScheme.onSecondary),
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.onSecondary),
                 horizontalArrangement = Arrangement.Center
             ) {
                 messages.forEachIndexed { index, _ ->

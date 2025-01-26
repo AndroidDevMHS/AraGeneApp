@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.Data
@@ -50,7 +49,14 @@ class NotificationWorker @AssistedInject constructor(
             return Result.failure()
         }
         val ta = Calendar.getInstance()
-        ta.add(Calendar.MINUTE, 15)
+        when (day) {
+            40 -> ta.add(Calendar.DAY_OF_YEAR, 3)
+            45 -> ta.add(Calendar.DAY_OF_YEAR, 3)
+            227 -> ta.add(Calendar.DAY_OF_YEAR, 5)
+            else -> ta.add(Calendar.DAY_OF_YEAR, 1)
+
+        }
+
 
         sendNotification(message, groupId, context)
 
@@ -105,8 +111,10 @@ fun scheduleNotifications(
     item: FahliCheckList,
     itemId: Int,
 ) {
+    val sharedPreferences = context.getSharedPreferences("selectedPack", Context.MODE_PRIVATE)
+    val selectedPackage = sharedPreferences.getInt("packNumber", 5)
     val workManager = WorkManager.getInstance(context)
-    val notDay = listOf(0, 4, 5, 6, 10, 20, 41, 47, 100, 111, 140, 160, 210, 220, 227)
+    val notDay = listOf(0, selectedPackage-1, selectedPackage, selectedPackage+1, selectedPackage+16, 40, 45, 100, 111, 147, 210, 220, 227)
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     val start: Date = try {
@@ -121,9 +129,9 @@ fun scheduleNotifications(
         // calendar.time = start
         //calendar.add(Calendar.DAY_OF_YEAR, day)
         //calendar.add(Calendar.HOUR_OF_DAY, 0)
-        calendar.add(Calendar.MINUTE,0)
-        calendar.add(Calendar.SECOND, 40+day)
-        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.add(Calendar.MINUTE,1)
+        calendar.add(Calendar.SECOND, day)
+        calendar.add(Calendar.MILLISECOND, day)
 
 
         val now = Calendar.getInstance()
@@ -139,47 +147,43 @@ fun scheduleNotifications(
 
             }
 
-            4 -> {
-                message ="گروه هم زمان سازی  ${item.groupName}\n فردا روز 5ام است و نیاز به انجام اقدامی خاص است "
-                text ="فردا باید به گروه ${item.groupName} \n هورمون روز ۵, به اندازه ۱.۲ سی سی و هورمون پودری به اندازه ۲ سی سی تزریق شود و سیدر برداری کنید. "
+            selectedPackage-1 -> {
+                message ="گروه هم زمان سازی  ${item.groupName}\n فردا روز $selectedPackage ام است و نیاز به انجام اقدامی خاص است "
+                text ="فردا باید به گروه ${item.groupName} \n هورمون روز $selectedPackage, به اندازه ۱.۲ سی سی و هورمون پودری به اندازه ۲ سی سی تزریق شود و سیدر برداری کنید. "
             }
 
-            5 -> {
-                message ="گروه همزمان سازی ${item.groupName} \nامروز روز 5امه، اقدامات لازم انجام دهید. "
-                text ="تزریق هورمون روز ۵, ۱.۲ سی سی و هورمون پودری ۲ سی سی و سیدر برداری را در گروه ${item.groupName}\n انجام دهید."
+            selectedPackage-> {
+                message ="گروه همزمان سازی ${item.groupName} \nامروز روز $selectedPackage امه، اقدامات لازم انجام دهید. "
+                text ="تزریق هورمون روز $selectedPackage, ۱.۲ سی سی و هورمون پودری ۲ سی سی و سیدر برداری را در گروه ${item.groupName}\n انجام دهید."
             }
 
-            6 -> {
+            selectedPackage+1 -> {
                 message = "گروه ${item.groupName} \n شروع قوچ اندازی "
                 text = "در گروه ${item.groupName}\n قوچ را رها کنید. "
             }
 
-            10 -> {
+            selectedPackage+16 -> {
                 message =
-                    "نتیجه قوچ اندازی ${item.groupName} را ثبت کنید"
-                text = "نتایج قوچ اندازی ${item.groupName} را ثبت کنید"
-            }
-
-            20 -> {
-                message =
-                    "فردا 16 روز از سیدبرداری گروه ${item.groupName}\n میگذره نیاز به اقدام برای رها سازی قوچ است."
+                    "فردا 16 روز از سیدربرداری گروه ${item.groupName}\n میگذره نیاز به اقدام برای رها سازی قوچ است."
                 text =
                     "فردا روز 16 بعد از سیدر برداری در گروه ${item.groupName}\n است لطفا قوچ را در این گروه به مدت سه روز رها کنید"
             }
 
-            41 -> {
-                message = "گروه ${item.groupName}\n 10 روز دیگر باید سونوگرافی شود "
-                text = "لطفا گروه ${item.groupName}\n را 10 روز دیگر سونوگرافی کنید "
+            40 -> {
+                message = "گروه ${item.groupName}\n 7 روز دیگر باید سونوگرافی شود "
+                text = "لطفا گروه ${item.groupName}\n را 7 روز دیگر سونوگرافی کنید "
             }
 
-            47 -> {
-                message = "گروه ${item.groupName}\n 4 روز دیگر باید سونوگرافی شود "
-                text = "گروه ${item.groupName}\n4 روز دیگر باید سونوگرافی شود\n چنانچه به دکتر سونوگراف دسترسی ندارید تیک مربوطه را فعال کنید"
+            45 -> {
+                message = "گروه ${item.groupName}\n 2 روز دیگر باید سونوگرافی شود "
+                text =
+                    "گروه ${item.groupName}\n2 روز دیگر باید سونوگرافی شود\n چنانچه به دکتر سونوگراف دسترسی ندارید تیک مربوطه را فعال کنید"
             }
 
             100 -> {
                 message = "گروه ${item.groupName}\n در دوره رشد جفت است."
-                text = "اقدام بسیار مهم برای گروه${item.groupName}\n رشد جفت در این بازه زمانی اتفاق می‌افتد و نسبت به آبستن سبک تغذیه باید تغییر کند، برای این منظور ویدیوی مربوط به این موضوع در اپلیکیشن اضافه شده است."
+                text =
+                    "اقدام بسیار مهم برای گروه ${item.groupName}\n رشد جفت در این بازه زمانی اتفاق می‌افتد و نسبت به آبستن سبک تغذیه باید تغییر کند، برای این منظور ویدیوی مربوط به این موضوع در اپلیکیشن اضافه شده است."
             }
 
             111 -> {
@@ -187,15 +191,16 @@ fun scheduleNotifications(
                 text ="طی یک هفته تا ۱۰ روز آینده باید واکسن آنتروتاکسمی به گروه ${item.groupName} تزریق شود، تغذیه مناسب آبستن سنگین و مواد معدنی باید انجام گردد"
             }
 
-            140 -> {
-                message ="به آغاز زایش دامهای گروه ${item.groupName} نزدیک میشویم!"
-                text ="برای زایمان میشهایتان آماده باشید نکات طلایی در ویدیویی که به آن دسترسی پیدا کرده اید توضیح داده شده است"
+            147 -> {
+                message = "حدود یک هفته از شروع زایمان های گروه ${item.groupName} میگذره !"
+                text =
+                    "حدود یک هفته از شروع زایمان های گروه ${item.groupName} میگذره و باید به نیازهای بره ها توجه کنید لطفا ویدئو زیر را مشاهده فرمایید."
             }
 
-            160 -> {
-                message ="بابت زایمانهای گروه ${item.groupName}\n تبریک ما را پذیرا باشید"
-                text ="بابت زایمانهای گروه ${item.groupName}\n تبریک ما را پذیرا باشید"
-            }
+            /* 170 -> {
+                 message ="بابت زایمانهای گروه ${item.groupName}\n تبریک ما را پذیرا باشید"
+                 text ="بابت زایمانهای گروه ${item.groupName}\n تبریک ما را پذیرا باشید"
+             }*/
 
             210 -> {
                 message ="شروع از شیر گیری بره های حاصل از گروه ${item.groupName}"

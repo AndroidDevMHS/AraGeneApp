@@ -5,7 +5,6 @@ package salimi.mohamad.aragenejetpack.screens.login
 import android.content.Context
 import android.graphics.Rect
 import android.view.ViewTreeObserver
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -22,13 +21,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -74,6 +69,7 @@ import salimi.mohamad.aragenejetpack.data.model.SmsRequest
 import salimi.mohamad.aragenejetpack.helper.ConnectionsStatus
 import salimi.mohamad.aragenejetpack.helper.currentConnectivityStatus
 import salimi.mohamad.aragenejetpack.helper.observeConnectivityAsFlow
+import salimi.mohamad.aragenejetpack.screens.PublicNoteDialog
 import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 import salimi.mohamad.aragenejetpack.utils.randomFourDigitNumber
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
@@ -111,7 +107,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top=40.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 40.dp, start = 10.dp, end = 10.dp)
             .pointerInput(Unit) {
                 detectTapGestures {
                     keyboardController?.hide() // Hide the keyboard
@@ -197,22 +193,16 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
 
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(
-                    checked = check,
-                    onCheckedChange = { check = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = colorResource(id = R.color.blue2_logo),
-                        checkmarkColor = colorResource(id = R.color.white)
-                    )
-                )
                 val annotatedText = buildAnnotatedString {
                     withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
                         append(
-                            "تمامی "
+                            "ورود به برنامه به معنای پذیرش تمامی "
                         )
                     }
                     pushStringAnnotation(tag = "terms", annotation = "قوانین")
@@ -227,12 +217,11 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
                     pop()
                     withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
                         append(
-                            " را مطالعه کرده و می‌پذیرم."
+                            " می باشد"
                         )
                     }
                 }
 
-                // نمایش متن قابل کلیک
                 ClickableText(
                     text = annotatedText,
                     style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
@@ -242,11 +231,17 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
                             start = offset,
                             end = offset
                         )
-                            .firstOrNull()?.let { annotation ->
-                                println("Clicked on: ${annotation.item}") // عملیات مربوط به کلیک روی "قوانین"
-                            }
+                        check = true
                     }
                 )
+                if (check) {
+                    PublicNoteDialog(
+                        onDismiss = { check = false },
+                        title = "مقررات",
+                        text = "از شماره تلفن همراه شماره فقط برای زمانی که تیک مربوط به درخواست یا خرید پک همزمان سازی علامت زده شود، برای شناسایی استفاده خواهد شد و تمامی قوانین حریم خصوصی شما رعایت خواهد شد.",
+                        image = painterResource(R.drawable.ic_phone_vib)
+                    )
+                }
             }
         }
 
@@ -268,7 +263,6 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
             ),
             onClick = {
                 val otpCode = randomFourDigitNumber()
-                if (check) {
                     if (phoneNumber.length == 11 && phoneNumber.startsWith("09")) {
                         keyboardController?.hide()
                         viewModel.sendSms(
@@ -285,11 +279,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
                         isError = true
                         txtError = "شماره همراه وارد شده معتبر نیست."
                     }
-                } else {
-                    Toast.makeText(context, "لطفا قوانین را مطالعه و تایید کنید", Toast.LENGTH_LONG)
-                        .show()
-                }
-            },
+                      },
         ) {
             Text(
                 "دریافت رمز یکبار مصرف",

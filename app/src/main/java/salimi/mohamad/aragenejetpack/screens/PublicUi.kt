@@ -33,6 +33,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -62,6 +65,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,8 +83,94 @@ import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
 
 
-@SuppressLint("InlinedApi")
+@Composable
+fun SelectDay(
+    onDismiss: () -> Unit,
+   onSelection: (Int) -> Unit
+) {
+    var selectedValue by remember { mutableStateOf(5) }
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        Dialog(onDismissRequest = {  }) {
+            Card(
+                modifier = Modifier,
+                shape = RoundedCornerShape(15.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.Center,
+                    //horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = "لطفا طبق اطلاعات بسته ارسالی نوع پک همزمان سازی را انتخاب کنین",
+                        fontFamily = FontFamily(Font(R.font.sans_bold)),
+                        fontSize = 18.sp,
+                       // textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
 
+                    // RadioGroup برای انتخاب بین ۵ و ۷
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            RadioButton(
+                                selected = selectedValue == 5,
+                                onClick = { selectedValue = 5 },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = colorResource(R.color.blue_logo)
+                                )
+                            )
+                            Text(
+                                text = "پک همزمان سازی 5 روزه",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            RadioButton(
+                                selected = selectedValue == 7,
+                                onClick = { selectedValue = 7 },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = colorResource(R.color.blue_logo)
+                                )
+                            )
+                            Text(
+                                text = "پک همزمان سازی ۷ روزه",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+                }
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                    horizontalArrangement = Arrangement.Center) {
+                    TextButton(onClick = {
+                        onSelection(selectedValue)
+                        onDismiss()
+                    }) {
+                        Text(
+                            "تایید",
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            fontSize = 18.sp,
+                            color = colorResource(R.color.blue2_logo)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@SuppressLint("InlinedApi")
 @Composable
 fun PublicNoteDialog(
     onDismiss: () -> Unit,
@@ -115,6 +205,7 @@ fun PublicNoteDialog(
                         text = title,
                         style = TextStyle(
                             fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             fontWeight = FontWeight.ExtraBold
                         )
@@ -752,7 +843,8 @@ fun Spinner(
     var expanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxWidth(0.55f)
+        modifier = Modifier
+            .fillMaxWidth(0.55f)
             .height(55.dp)
             .border(
                 width = 1.dp,

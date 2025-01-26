@@ -1,5 +1,6 @@
 package salimi.mohamad.aragenejetpack.screens
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import androidx.compose.foundation.Image
@@ -26,10 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -43,19 +42,19 @@ import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 
 
+@SuppressLint("SourceLockedOrientationActivity")
 @Composable
 fun Home(navController: NavController) {
     val context= LocalContext.current
     val activity = context as? Activity
     activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-    // استفاده از DisposableEffect برای بازگرداندن حالت بعد از خروج
     DisposableEffect(context) {
         onDispose {
-            // پس از خروج از این Composable، حالت چرخش به حالت پیش‌فرض برمی‌گردد
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +67,6 @@ fun Home(navController: NavController) {
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                 ),
-                //elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(205.dp)
@@ -97,9 +95,6 @@ fun Home(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
-                    //.background(
-                    //   color = MaterialTheme.colorScheme.primary,
-                    // )
                     ,
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -165,15 +160,7 @@ fun Home(navController: NavController) {
 
 @Composable
 fun MainScreenItemsRe(image: Painter, text: String, page: String, navController: NavController) {
-    val gradientBox = Brush.horizontalGradient(
-        colors = listOf(
-            colorResource(
-                R.color.blue_logo
-            ),
-            colorResource(R.color.blue2_logo)
-        )
 
-    )
     Card(
         onClick = { navController.navigate(page) },
         modifier = Modifier

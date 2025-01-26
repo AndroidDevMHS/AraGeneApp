@@ -19,6 +19,7 @@ class DataStoreViewModel @Inject constructor(
         const val USER_LOGIN_STATE_KEY = "UserLoginKey"
         const val USER_PHONE_KEY = "UserPhoneKey"
         const val FIRST_LOGIN_KEY="FirstLogin"
+        const val SELECTED_PACK_KEY="SelectedPackKey"
 
     }
     init {

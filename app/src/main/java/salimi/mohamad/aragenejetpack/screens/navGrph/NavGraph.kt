@@ -50,6 +50,7 @@ import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.data.model.BtnNavItem
 import salimi.mohamad.aragenejetpack.screens.About
 import salimi.mohamad.aragenejetpack.screens.AccountScreen
+import salimi.mohamad.aragenejetpack.screens.AparatView
 import salimi.mohamad.aragenejetpack.screens.Article
 import salimi.mohamad.aragenejetpack.screens.ArticleTxtShow
 import salimi.mohamad.aragenejetpack.screens.FahliCheckList
@@ -203,6 +204,13 @@ fun SetupNavGraph(
                 ) {
                     SuperMixFormulaScreen()
                 }
+                composable(
+                    route = Screens.ShowAparatScreen.route + "/{URL}",
+                            arguments = listOf( navArgument("URL") { type = NavType.StringType })
+                ) {navBackStackEntry ->
+                    val url = navBackStackEntry.arguments?.getString("URL")
+                    AparatView(navController = navController, videoUrl = url?:"")
+                }
             }
         }
     }
@@ -222,7 +230,7 @@ fun BottomNavigationBar(navController: NavController, badge: Boolean) {
         ),
 
         BtnNavItem(
-            title = "برنامه",
+            title = "اقدامات",
             route = Screens.Planner.route,
             selectedIcon = Icons.Filled.DateRange,
             unSelectedIcon = Icons.Outlined.DateRange,

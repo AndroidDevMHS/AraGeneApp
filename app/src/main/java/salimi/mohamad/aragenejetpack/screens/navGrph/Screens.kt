@@ -16,5 +16,6 @@ sealed class Screens(val route:String) {
     data object SuperMix:Screens(route = "SuperMix")
     data object ArticleTxtShow:Screens(route = "ArticleTxtShow")
     data object SuperMixCalculator:Screens(route = "SuperMixCalculator")
+    data object ShowAparatScreen:Screens(route = "ShowAparatScreen")
 
 }

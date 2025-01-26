@@ -2,13 +2,8 @@
 
 package salimi.mohamad.aragenejetpack.screens
 
-import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.net.Uri
-import android.os.Build
 import android.util.Log
-import android.view.View
-import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,32 +11,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,9 +42,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -63,18 +52,18 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-import com.codegames.aparatview.AparatView
 import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.screens.login.CheckConnectivityStatus
+import salimi.mohamad.aragenejetpack.screens.navGrph.Screens
 import salimi.mohamad.aragenejetpack.viewModel.UrlState
 import salimi.mohamad.aragenejetpack.viewModel.VideoUrlViewModel
 
@@ -84,7 +73,6 @@ fun VideoShow(
     navController: NavController,
     viewModel: VideoUrlViewModel
 ) {
-    val context = LocalContext.current
     val videoU by viewModel.videoState.collectAsState()
 
     CheckConnectivityStatus {
@@ -94,11 +82,6 @@ fun VideoShow(
     LaunchedEffect(Unit) {
         viewModel.sendRequest()
     }
-
-
-    var selectedVideoUrl by remember { mutableStateOf<String?>(null) }
-    var showDialog by remember { mutableStateOf(false) }
-
 
 
     when (val state = videoU) {
@@ -133,27 +116,21 @@ fun VideoShow(
         is UrlState.Success -> {
             val videoUrls = state.videos.map { it.link }
             val txtButton = state.videos.map { it.title }
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2), // تعداد ستون‌ها را به ۲ تنظیم می‌کنیم
+                columns = GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(10.dp),
                 contentPadding = PaddingValues(16.dp)
             ) {
-                Log.e("3030", videoUrls.toString())
                 itemsIndexed(videoUrls) { index, link ->
                     ButtonShow(painterResource(R.drawable.video_player), txtButton[index]) {
-                        selectedVideoUrl = link
-                        showDialog = true
+                        navController.navigate(Screens.ShowAparatScreen.route +"/$link")
                     }
                 }
-            }
+            }}
         }
-    }
-
-    if (showDialog && selectedVideoUrl != null) {
-        Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-        AparatWebView(videoUrl = selectedVideoUrl!!) { showDialog = false }}
     }
 }
 
@@ -264,46 +241,4 @@ fun VideoPlayer(videoUrl: String) {
     }
 }
 
-@Composable
-fun AparatWebView(videoUrl: String, onBackPress: () -> Unit) {
-    BackHandler {
-        onBackPress()
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        contentAlignment = Alignment.Center
-    ) {
-        AndroidView(
-            factory = { context ->
-                AparatView(context).apply {
-                    this.videoId = videoUrl
-                    this.videoRatio = "16:9"
-                    this.isFullScreen = true
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        )
 
-        // دکمه بازگشت
-        IconButton(
-            onClick = onBackPress,
-            modifier = Modifier
-                .width(150.dp)
-                .align(Alignment.TopStart)
-                .padding(top = 10.dp)
-
-        ) {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "بازگشت",
-                    tint = Color.White
-                )
-                Text("بازگشت به صفحه قبل", color = Color.White)
-            }
-        }
-    }
-}
