@@ -28,6 +28,7 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
+
         <receiver
             android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
             android:enabled="true"

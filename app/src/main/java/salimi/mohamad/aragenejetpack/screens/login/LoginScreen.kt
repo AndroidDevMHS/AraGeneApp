@@ -304,6 +304,7 @@ class PhoneNumberVisualTransformation : VisualTransformation {
     }
 }
 
+
 @Composable
 fun CheckConnectivityStatus(onDismiss:()->Unit){
     val connection by connectivityStatus()
