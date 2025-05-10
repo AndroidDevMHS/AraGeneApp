@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
@@ -82,80 +83,85 @@ fun Planner(
 
     if (itemsList.isNotEmpty()) {
 
-    LazyColumn(
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
-    ) {
-        itemsIndexed(itemsList) { _, item ->
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            itemsIndexed(itemsList) { _, item ->
 
-            val now = Calendar.getInstance().time
-            val itemDate = dateFormat.parse(item.time)
-            val diff = itemDate!!.time - now.time
+                val now = Calendar.getInstance().time
+                val itemDate = dateFormat.parse(item.time)
+                val diff = itemDate!!.time - now.time
 
-            val url = when (item.day) {
-                0 -> "mjb2lbe"
-                4 -> "dlrr6nj"
-                6 -> "tnx6b4v"
-                40 -> "yri7818"
-                100 -> "hrq89s3"
-                111 -> "hzt94q6"
-                147 -> "wvk0u2w"
-                210 -> "mcmzgi1"
-                else -> ""
-            }
-
-            if (diff > 0) {
-                val diffInSeconds = diff / 1000
-                val diffInMinutes = diffInSeconds / 60
-                minute =diffInMinutes.toInt()
-                hour = (diffInMinutes / 60).toInt()
-
-            }
-
-            if (now.before(itemDate)) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    HorizontalDivider(
-                        modifier = Modifier.weight(1f),
-                        thickness = 1.dp,
-                        color = colorResource(R.color.grey_logo)
-                    )
-
-                    Text(
-                        text = if (hour>1) "تا $hour ساعت دیگر " else " تا $minute دقیقه دیگر",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colorResource(R.color.blue_logo),
-                        modifier = Modifier.padding(start = 5.dp, end = 5.dp)
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.weight(1f),
-                        thickness = 1.dp,
-                        color = colorResource(R.color.grey_logo)
-                    )
+                val url = when (item.day) {
+                    0 -> "mjb2lbe"
+                    4 -> "dlrr6nj"
+                    6 -> "tnx6b4v"
+                    40 -> "yri7818"
+                    100 -> "hrq89s3"
+                    111 -> "hzt94q6"
+                    147 -> "wvk0u2w"
+                    210 -> "mcmzgi1"
+                    else -> ""
                 }
-                ShowPlan(
-                    item,
-                    phoneNum,
-                    url,
-                    context,
-                    viewModelPlanner,
-                    viewModelSms,
-                    navController
-                )
-            } else {
-                viewModelPlanner.deleteGroup(item)
+
+                if (diff > 0) {
+                    val diffInSeconds = diff / 1000
+                    val diffInMinutes = diffInSeconds / 60
+                    minute = diffInMinutes.toInt()
+                    hour = (diffInMinutes / 60).toInt()
+
+                }
+
+                if (now.before(itemDate)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            thickness = 1.dp,
+                            color = colorResource(R.color.grey_logo)
+                        )
+
+                        Text(
+                            text = if (hour > 1) "تا $hour ساعت دیگر " else " تا $minute دقیقه دیگر",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colorResource(R.color.blue_logo),
+                            modifier = Modifier.padding(start = 5.dp, end = 5.dp)
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            thickness = 1.dp,
+                            color = colorResource(R.color.grey_logo)
+                        )
+                    }
+                    ShowPlan(
+                        item,
+                        phoneNum,
+                        url,
+                        context,
+                        viewModelPlanner,
+                        viewModelSms,
+                        navController
+                    )
+                } else {
+                    viewModelPlanner.deleteGroup(item)
+                }
             }
         }
-        }
-    }else{
-        Column (modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-            Text("موردی برای اقدام وجود ندارد",
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "موردی برای اقدام وجود ندارد",
                 color = colorResource(R.color.blue_logo),
                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                 fontSize = 22.sp,
@@ -183,7 +189,7 @@ fun ShowPlan(
     var showSonoItem by remember { mutableStateOf(false) }
     var showBuyItem by remember { mutableStateOf(false) }
     when (item.day) {
-        0, 4, 6, 40, 100, 111,147, 210 -> showVideoLinkItem = true
+        0, 4, 6, 40, 100, 111, 147, 210 -> showVideoLinkItem = true
         45 -> showSonoItem = true
         227 -> showBuyItem = true
     }
@@ -203,7 +209,7 @@ fun ShowPlan(
                     .heightIn(min = 170.dp)
                     .fillMaxSize()
                     .background(
-                        color = colorResource(R.color.light_blue).copy(0.7f),//Color.Black.copy(alpha = 0.5f),
+                        color = colorResource(R.color.blue2_logo).copy(alpha = 0.4f),
                         shape = RoundedCornerShape(12.dp)
                     ),
             ) {
@@ -215,7 +221,8 @@ fun ShowPlan(
                     style = TextStyle(
                         textAlign = TextAlign.Center,
                         fontFamily = FontFamily(Font(R.font.sans_bold)),
-                        fontSize = 22.sp
+                        fontSize = 22.sp,
+                        color = colorResource(R.color.blue_logo).copy(alpha = 2f)
                     )
                 )
                 Text(
@@ -227,7 +234,8 @@ fun ShowPlan(
                     style = TextStyle(
                         textAlign = TextAlign.Center,
                         fontFamily = FontFamily(Font(R.font.sans_bold)),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        color = colorResource(R.color.blue_logo)
                     )
                 )
                 if (showVideoLinkItem) {
@@ -240,6 +248,7 @@ fun ShowPlan(
                             "مشاهده ویدیو آموزشی",
                             fontSize = 18.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
+                            color = colorResource(R.color.sunset).copy(alpha = 2f)
                         )
                     }
                 }
@@ -261,14 +270,15 @@ fun ShowPlan(
                                     done = it
                                 },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = colorResource(id = R.color.blue2_logo),
-                                    checkmarkColor = colorResource(id = R.color.white)
+                                    checkedColor = colorResource(id = R.color.sunset),
+                                    checkmarkColor = colorResource(id = R.color.blue_logo)
                                 )
                             )
                             Text(
                                 text = "انجام شد",
                                 fontSize = 18.sp,
-                                fontFamily = FontFamily(Font(R.font.sans_bold))
+                                fontFamily = FontFamily(Font(R.font.sans_bold)),
+                                color = colorResource(R.color.blue_logo)
                             )
                         }
                     }

@@ -1,14 +1,7 @@
 package salimi.mohamad.aragenejetpack.screens
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,21 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
@@ -46,22 +31,31 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import salimi.mohamad.aragenejetpack.R
+import salimi.mohamad.aragenejetpack.viewModel.SuperMixViewModel
 
-@Preview(showBackground = true)
+
 @Composable
-fun SuperMixScreen() {
+fun SuperMixScreen(viewModel: SuperMixViewModel) {
+    val scrollState = rememberScrollState()
+    val savedScrollPosition = viewModel.scrollPosition
 
+    LaunchedEffect(savedScrollPosition) {
+        scrollState.scrollTo(savedScrollPosition.value)
+    }
+
+    // ذخیره موقعیت اسکرول هنگام خروج یا تغییر اسکرول
+    LaunchedEffect(scrollState.value) {
+        viewModel.saveScrollPosition(scrollState.value)
+    }
     val longText1 = buildAnnotatedString {
         // وسط‌چین کردن فقط این خط
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -72,13 +66,13 @@ fun SuperMixScreen() {
         // خطوط دیگر بدون وسط‌چین
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
-                color = Color.Black
+                fontSize = 20.sp,
+                color = Color.Black,
             )
         ) {
             append(
                 "این پروتکل به عنوان راهنما و دستورالعمل استفاده از سوپرمیکس ۲۰ درصد، برای حصول افزایش وزن بیشتر در مقایسه " +
-                        "با روشهای رایج پرواربندی بره تنظیم شده است. قبل از توضیح روش پرواربندی، لازم است چند نکته را مد نظر داشته باشید:\n" +
+                        "با روشهای رایج پرواربندی بره تنظیم شده است. قبل از توضیح روش پرواربندی، لازم است چند نکته را مد نظر داشته باشید:\n\n" +
                         "اول اینکه سوپرمیکس 20% به عنوان یک مکمل پروتئینه-معدنی با فرمولاسیون خاص شرکت آراژن می باشد و به تنهایی " +
                         "پاسخگوی نیاز بره های پرواری نیست.\n\n" +
                         "ثانیا روش تغذیه با سوپرمیکس 20% سیستم تغذیه ای جدیدی است که در این دستورالعمل به تفصیل به آن پرداخته شده است. " +
@@ -87,7 +81,7 @@ fun SuperMixScreen() {
                         "ثالثا لطفاً توجه کنید که از لحاظ زمانبندی، سیستم تغذیه آراژن به ۲ دوره سازگاری (عادت دهی) و دوره اصلی پرواربندی " +
                         "تقسیم می\u200Cشود.\n\n" +
                         "در هر دو دوره، بره\u200Cهای پرواری از کنسانتره تهیه شده با سوپرمیکس و علوفه تغذیه می\u200C شوند و یکی از اهداف و " +
-                        "ویژگی های این سیستم پرواربندی این است که با رسیدن به انتهای دوره سازگاری، میزان مصرف روزانه علوفه به حداقل\n" +
+                        "ویژگی های این سیستم پرواربندی این است که با رسیدن به انتهای دوره سازگاری، میزان مصرف روزانه علوفه به حداقل " +
                         "برسد. از طرف دیگر، توجه داشته باشید که برای ساخت کنسانتره، به دانه کامل (سالم) غلات نیاز است. غلات مورد استفاده " +
                         "برای کنسانتره شامل گندم، جو و ذرت می باشد.\n"
             )
@@ -96,54 +90,54 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 color = Color.Red // رنگ قرمز
             )
         ) {
-            append("توجه")
+            append("توجه\n")
         }
         pop()
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
             append(
-                "نگران استفاده از دانه کامل برای تغذیه بره ها نباشید چرا که تحقیقات و بررسی\u200Cهای ما نشان داده است که طبق این\n" +
+                "نگران استفاده از دانه کامل برای تغذیه بره ها نباشید چرا که تحقیقات و بررسی\u200Cهای ما نشان داده است که طبق این " +
                         "روش میزان دفع دانه کامل در مدفوع نزدیک به صفر است و هضم و جذب دانه\u200Cها به صورت کامل صورت می\u200Cگیرد.\n\n" +
-                        "میزان خوراک مصرفی روزانه برههای پرواری حدود 4 درصد وزن بدن میباشد و مصرف کنسانتره به صورت متوسط\n" +
-                        "بسته به وزن شروع پروار بین ۱.4 الی ۲ کیلوگرم در روز و ۱۲۰ الی ۱۴۰ کیلوگرم در طی دوره پرواربندی می\u200Cباشد. از\n" +
-                        "این مقدار ۱۲۰ الی ۱۴۰ کیلوگرم کنسانتره حدود ۲۰ درصد سوپرمیکس، ۲۰ درصد گندم، 25 درصد جو و 35 درصد\n" +
+                        "میزان خوراک مصرفی روزانه برههای پرواری حدود 4 درصد وزن بدن میباشد و مصرف کنسانتره به صورت متوسط " +
+                        "بسته به وزن شروع پروار بین ۱.4 الی ۲ کیلوگرم در روز و ۱۲۰ الی ۱۴۰ کیلوگرم در طی دوره پرواربندی می\u200Cباشد. از " +
+                        "این مقدار ۱۲۰ الی ۱۴۰ کیلوگرم کنسانتره حدود ۲۰ درصد سوپرمیکس، ۲۰ درصد گندم، 25 درصد جو و 35 درصد " +
                         "ذرت می\u200Cباشد.\n"
             )
         }
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 color = Color.Red // رنگ قرمز
             )
         ) {
-            append("احتیاط")
+            append("احتیاط\n")
         }
         pop()
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
             append(
                 "دوباره تاکید می\u200Cشود که غلات باید به صورت کامل و سالم بوده و از غلات آرد شده استفاده نکنید.\n" +
-                        "بسته به وزن شروع و پایان پرواربندی، مقدار یونجه و کاه مورد نیاز هر دام در طول دوره ۱۵ الی ۲۰ کیلوگرم در نظر\n\n" +
-                        "گرفته شود.\n"
+                        "بسته به وزن شروع و پایان پرواربندی، مقدار یونجه و کاه مورد نیاز هر دام در طول دوره ۱۵ الی ۲۰ کیلوگرم در نظر " +
+                        "گرفته شود.\n\n"
             )
         }
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -152,7 +146,7 @@ fun SuperMixScreen() {
         pop()
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -187,7 +181,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -196,7 +190,7 @@ fun SuperMixScreen() {
         pop()
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -213,13 +207,13 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
             append(
                 "برای پرواربندی توصیه می\u200Cشود از بره\u200Cهای بزرگ جثه از نژاد افشاری، قزل افشار، قره قزل، لری بختیاری، شال،" +
-                        "مغانی و... استفاده شود. نژادهای خارجی مانند لاکن، رومن و اصف که در دامداری کنونی کشور جایگاه پیدا کردند نیز" +
+                        " مغانی و... استفاده شود. نژادهای خارجی مانند لاکن، رومن و اصف که در دامداری کنونی کشور جایگاه پیدا کردند نیز" +
                         "جزو نژادهای مناسب پروار محسوب می\u200Cشوند. وزن شروع برای پرواربندی در نژادهای بزرگ جثه بین 35 تا 37 " +
                         "کیلوگرم مناسب است.\n" +
                         "اما برای انتخاب بره به منظور پرواربندی یک قانون کلی را در نظر بگیرید و آن اینکه، بره\u200Cهایی که دارای استخوان " +
@@ -231,28 +225,29 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 color = Color.Red // رنگ قرمز
             )
         ) {
             append("نکته\n")
         }
+        pop()
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
             append(
                 "هدف از پرواربندی، تولید گوشت لخم می\u200Cباشد. پس در انتخاب بره\u200Cها حتماً به این نکته توجه کنید که به هیچ عنوان " +
-                        "چاق نباشند.\n"
+                        "چاق نباشند.\n\n"
             )
         }
-        pop()
+
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -275,7 +270,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -284,7 +279,7 @@ fun SuperMixScreen() {
         pop()
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black // رنگ قرمز
             )
         ) {
@@ -292,7 +287,7 @@ fun SuperMixScreen() {
                 "در صورتی که بره\u200Cها را خریداری کردید و می\u200Cخواهید آنها را به دامداری خودتان حمل کنید، در نظر بگیرید که کاهش " +
                         "وزن و پنومونی دو مشکل عمده در طی فرایند حمل و نقل می\u200Cباشد\u200C. برای کنترل پنومونی می\u200Cتوانید از تزریق اکسی " +
                         "تتراسایکلین ۲۰ درصد ال ای (طولانی الاثر) به میزان توصیه شده توسط شرکت سازنده در بروشور دارو، استفاده " +
-                        "کنید. بهتر است این دارو را یک روز قبل از بارگیری حیوان تزریق کنید. توجه کنید که یکی از عوامل اصلی پنومونی\n" +
+                        "کنید. بهتر است این دارو را یک روز قبل از بارگیری حیوان تزریق کنید. توجه کنید که یکی از عوامل اصلی پنومونی " +
                         "در معرض باد سرد قرار گرفتن حیوان می\u200Cباشد. بنابراین، برای حمل و نقل در صورت امکان از ماشین\u200Cهای دارای چادر " +
                         "استفاده کنید. عموما کاهش وزن به دلیل حمل و نقل به خاطر دفع ادرار و تخلیه روده حیوان می\u200Cباشد. اما کاهش وزن " +
                         "بیشتر که به دلیل از دست دادن مقداری از عضلات است، توسط مولتی ویتامین\u200Cهای دارای آمینو اسید قابل کنترل است. " +
@@ -305,7 +300,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -315,7 +310,7 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -334,7 +329,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -344,7 +339,7 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -360,7 +355,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 color = Color.Red // رنگ قرمز
             )
         ) {
@@ -374,7 +369,7 @@ fun SuperMixScreen() {
         append("برای کنترل کنه، جرب و کک می توان از حمام ضد کنه و یا سمپاشی استفاده کرد.\n")
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -400,7 +395,7 @@ fun SuperMixScreen() {
     val longText5 = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -419,7 +414,7 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -431,7 +426,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -441,7 +436,7 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -454,7 +449,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -464,7 +459,7 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -473,17 +468,17 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
-            append("دستهآخور، آبشخور و جایگاه\n")
+            append("دسته\u200Cآخور، آبشخور و جایگاه\n")
         }
         pop()
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -499,7 +494,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -509,7 +504,7 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -521,7 +516,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -531,17 +526,17 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
-            append("فرمول پیشنهادی کنسانتره و نحوه خوراک دهی در سیستم پرواربندی شرکت آراژن به صورت زیر می¬باشد:\n")
+            append("فرمول پیشنهادی کنسانتره و نحوه خوراک دهی در سیستم پرواربندی شرکت آراژن به صورت زیر می\u200cباشد:\n")
         }
     }
     val longText6 = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -549,7 +544,7 @@ fun SuperMixScreen() {
         }
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -561,7 +556,7 @@ fun SuperMixScreen() {
         pushStyle(ParagraphStyle(textAlign = TextAlign.Center))
         withStyle(
             style = SpanStyle(
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 color = colorResource(R.color.blue_logo)
             )
         ) {
@@ -571,13 +566,13 @@ fun SuperMixScreen() {
 
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
             append(
-                " بره\u200Cهایی که وارد دوره پرواربندی می\u200Cشوند به دو گروه قابل تقسیم بندی هستند. گروه اول بره\u200Cهای خریداری شده با خوراک مصرفی نامشخص (برای مثال بره¬های خریداری شده از میدان دام) و گروه دوم بره\u200Cهای پایه پروار که سابقه خوراک مصرفی آنها مشخص است (برای مثال از دامداری همسایه یا فامیل که سابقه خوراک مصرفی آنها در دسترس است) می\u200Cباشد. گروه دوم به سه زیر گروه به شرح زیر تقسیم می\u200Cشود. زیر گروه اول بره\u200Cهای مرتع¬رو هستند که در پس چر گندم و جو چرا کرده¬اند. زیر گروه دوم بره\u200Cهای مرتع رویی هستند که صرفاً علوفه مرتع مصرف کرده اند و زیر گروه سوم بره\u200Cهای حاصل از میش\u200Cهای گله خودتان می\u200Cباشند که به شکل دستی تغذیه شده اند. \n" +
-                        "هنگامی که بره از گروه اول تهیه کردید (یعنی سابقه تغذیه بره در دسترس نیست)، بسیار دقت کنید که امکان دارد فروشنده به منظور افزایش وزن فروش، مقدار زیادی جو به بره ها خورانده باشد. بنابراین، در طی ۲۴ ساعت اول ورود بره¬ها به دامداری، توجه زیادی به رفتار خوردن و فضولات آن ها داشته باشید. بهتر است در طی این ۲۴ ساعت از دادن کنسانتره به بره¬ها خودداری کرده و با یونجه خرد شده تغذیه کنید. در صورت مشاهده اسهال و نفخ و همچنین بی \u200Cمیلی به خوردن خوراک، این دسته از بره\u200Cها را جدا کرده، قرنطینه نموده و درمان اسیدوز را شروع کنید. در بخش مربوط به پروتکل های درمانی به درمان اسیدوز به صورت مفصل پرداخته شده است. از روز دوم تغذیه، این بره\u200Cها را با ۱۰۰ گرم کنسانتره در روز شروع کنید. فردای روز دوم (روز سوم) نیز تنها ۱۰۰ گرم کنسانتره به بره دهید. روز چهارم میزان کنسانتره را 100 گرم افزایش دهید. بهترین روش عادت دهی بره ها به جیره های دان سالم به صورتی می باشد که هر دو روز یکبار، 100 گرم دانه را به جیره اضافه نمایید. به عبارت دیگر، روز اول، هیچ کنسانتره\u200Cای به بره داده نمی¬شود. روز دوم ۱۰۰ گرم کنسانتره به بره داده می\u200Cشود. روز سوم ۱۰۰ گرم و روز چهارم 200 گرم، روز پنجم 200 گرم و به همین ترتیب، هر دو روز یکبار 100 گرم افزایش میزان کنسانتره را در جیره روزانه بره\u200Cها خواهیم داشت.\n" +
+                " بره\u200Cهایی که وارد دوره پرواربندی می\u200Cشوند به دو گروه قابل تقسیم بندی هستند. گروه اول بره\u200Cهای خریداری شده با خوراک مصرفی نامشخص (برای مثال بره\u200cهای خریداری شده از میدان دام) و گروه دوم بره\u200Cهای پایه پروار که سابقه خوراک مصرفی آنها مشخص است (برای مثال از دامداری همسایه یا فامیل که سابقه خوراک مصرفی آنها در دسترس است) می\u200Cباشد. گروه دوم به سه زیر گروه به شرح زیر تقسیم می\u200Cشود. زیر گروه اول بره\u200Cهای مرتع\u200Cرو هستند که در پس چر گندم و جو چرا کرده¬اند. زیر گروه دوم بره\u200Cهای مرتع رویی هستند که صرفاً علوفه مرتع مصرف کرده اند و زیر گروه سوم بره\u200Cهای حاصل از میش\u200Cهای گله خودتان می\u200Cباشند که به شکل دستی تغذیه شده اند. \n" +
+                        "هنگامی که بره از گروه اول تهیه کردید (یعنی سابقه تغذیه بره در دسترس نیست)، بسیار دقت کنید که امکان دارد فروشنده به منظور افزایش وزن فروش، مقدار زیادی جو به بره ها خورانده باشد. بنابراین، در طی ۲۴ ساعت اول ورود بره\u200Cها به دامداری، توجه زیادی به رفتار خوردن و فضولات آن ها داشته باشید. بهتر است در طی این ۲۴ ساعت از دادن کنسانتره به بره\u200cها خودداری کرده و با یونجه خرد شده تغذیه کنید. در صورت مشاهده اسهال و نفخ و همچنین بی \u200Cمیلی به خوردن خوراک، این دسته از بره\u200Cها را جدا کرده، قرنطینه نموده و درمان اسیدوز را شروع کنید. در بخش مربوط به پروتکل های درمانی به درمان اسیدوز به صورت مفصل پرداخته شده است. از روز دوم تغذیه، این بره\u200Cها را با ۱۰۰ گرم کنسانتره در روز شروع کنید. فردای روز دوم (روز سوم) نیز تنها ۱۰۰ گرم کنسانتره به بره دهید. روز چهارم میزان کنسانتره را 100 گرم افزایش دهید. بهترین روش عادت دهی بره ها به جیره های دان سالم به صورتی می باشد که هر دو روز یکبار، 100 گرم دانه را به جیره اضافه نمایید. به عبارت دیگر، روز اول، هیچ کنسانتره\u200Cای به بره داده نمی\u200Cشود. روز دوم ۱۰۰ گرم کنسانتره به بره داده می\u200Cشود. روز سوم ۱۰۰ گرم و روز چهارم 200 گرم، روز پنجم 200 گرم و به همین ترتیب، هر دو روز یکبار 100 گرم افزایش میزان کنسانتره را در جیره روزانه بره\u200Cها خواهیم داشت.\n" +
                         "بره ها روزانه 4 درصد وزن بدن خود خوراک مصرف میکنند . در وعده صبح کنسانتره و سپس علوفه، در وعده ظهر کنسانتره و سپس علوفه و در وعده شب نیز ابتدا کنسانتره و سپس علوفه. \n\n" +
                         "به این مثال مهم توجه کنید:\n" +
                         "فرض کنید میانگین وزنی بره هایتان، 35 کیلوگرم است و تمام بره ها در گروه 35 کیلوگرم قرار می\u200Cگیرند. بنابراین 4 درصد وزن بدن آنها (یعنی وزن خوراک روزانه مورد نیاز) مقدار 1400 گرم (یک کیلو و چهارصد گرم) محاسبه می شود. بنابراین خوراک دهی را با این مقدار شروع می کنیم.  و مطابق جدول عادت دهی پیش میرویم.\n"
@@ -589,7 +584,7 @@ fun SuperMixScreen() {
     val longText7 = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -621,7 +616,7 @@ fun SuperMixScreen() {
     val longText8 = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                fontSize = 17.sp,
+                fontSize = 20.sp,
                 color = Color.Black
             )
         ) {
@@ -931,46 +926,3 @@ fun SuperMixScreen() {
     }
 }
 
-@Composable
-fun ZoomableImage(painter: Int) {
-    var scale by remember { mutableStateOf(1f) }
-    var scaleState by remember { mutableStateOf(2f) }
-    val coroutineScope = rememberCoroutineScope()
-
-    // Animate the scale back to 1 when released
-    val animatedScale by animateFloatAsState(
-        targetValue = scaleState,
-        animationSpec = tween(durationMillis = 300) // Duration of the animation
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    // Apply zoom on each transform gesture
-                    scale *= zoom
-                }
-            }
-    ) {
-        Image(
-            painter = painterResource(id = painter), // Replace with your image
-            contentDescription = "Zoomable Image",
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer(
-                    scaleX = animatedScale,
-                    scaleY = animatedScale,
-                )
-        )
-
-        // Reset the scale when zooming stops
-        LaunchedEffect(scale) {
-            if (scale == 1f) {
-                scaleState = 1f // Set scaleState to 1 when released
-            } else {
-                scaleState = scale
-            }
-        }
-    }
-}

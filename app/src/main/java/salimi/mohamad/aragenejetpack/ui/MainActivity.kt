@@ -18,6 +18,7 @@ import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
 import salimi.mohamad.aragenejetpack.viewModel.PlannerViewModel
 import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
+import salimi.mohamad.aragenejetpack.viewModel.SuperMixViewModel
 import salimi.mohamad.aragenejetpack.viewModel.VideoUrlViewModel
 
 
@@ -28,9 +29,15 @@ class MainActivity : ComponentActivity() {
 
     private var dPermission = mutableStateOf(false)
 
+    val viewModelSms by viewModels<SmsViewModel>()
+    val viewModelDataStore by viewModels<DataStoreViewModel>()
+    val viewModelDataBase by viewModels<FahliCheckDbViewModel>()
+    val viewModelPlanner by viewModels<PlannerViewModel>()
+    val viewModelVideoUrl by viewModels<VideoUrlViewModel>()
+    val viewModelSuperMix by viewModels<SuperMixViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
@@ -39,13 +46,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         setContent {
-            val viewModelSms by viewModels<SmsViewModel>()
-            val viewModelDataStore by viewModels<DataStoreViewModel>()
-            val viewModelDataBase by viewModels<FahliCheckDbViewModel>()
-            val viewModelPlanner by viewModels<PlannerViewModel>()
-            val viewModelVideoUrl by viewModels<VideoUrlViewModel>()
-
-
 
             AraGeneJetPackTheme {
 
@@ -64,11 +64,10 @@ class MainActivity : ComponentActivity() {
                     viewModelDataStore,
                     viewModelDataBase,
                     viewModelPlanner,
-                    viewModelVideoUrl
+                    viewModelVideoUrl,
+                    viewModelSuperMix
                 )
             }
-
         }
-        checkAndRequestNotificationPermission(this)
     }
 }

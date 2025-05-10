@@ -86,11 +86,11 @@ import salimi.mohamad.aragenejetpack.viewModel.SmsViewModel
 @Composable
 fun SelectDay(
     onDismiss: () -> Unit,
-   onSelection: (Int) -> Unit
+    onSelection: (Int) -> Unit
 ) {
     var selectedValue by remember { mutableStateOf(5) }
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        Dialog(onDismissRequest = {  }) {
+        Dialog(onDismissRequest = {onDismiss() }) {
             Card(
                 modifier = Modifier,
                 shape = RoundedCornerShape(15.dp),
@@ -99,15 +99,14 @@ fun SelectDay(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(color = Color.White)
                         .padding(20.dp),
                     verticalArrangement = Arrangement.Center,
-                    //horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = "لطفا طبق اطلاعات بسته ارسالی نوع پک همزمان سازی را انتخاب کنین",
                         fontFamily = FontFamily(Font(R.font.sans_bold)),
-                        fontSize = 18.sp,
-                       // textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
@@ -121,11 +120,12 @@ fun SelectDay(
                                 selected = selectedValue == 5,
                                 onClick = { selectedValue = 5 },
                                 colors = RadioButtonDefaults.colors(
-                                    selectedColor = colorResource(R.color.blue_logo)
+                                    selectedColor = colorResource(R.color.sunset)
                                 )
                             )
                             Text(
                                 text = "پک همزمان سازی 5 روزه",
+                                fontSize = 18.sp,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
@@ -138,20 +138,27 @@ fun SelectDay(
                                 selected = selectedValue == 7,
                                 onClick = { selectedValue = 7 },
                                 colors = RadioButtonDefaults.colors(
-                                    selectedColor = colorResource(R.color.blue_logo)
+                                    selectedColor = colorResource(R.color.sunset)
                                 )
                             )
                             Text(
                                 text = "پک همزمان سازی ۷ روزه",
+                                fontSize = 18.sp,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
                     }
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
-                    horizontalArrangement = Arrangement.Center) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = colorResource(R.color.blue_logo2).copy(alpha = 0.5f))
+                        .clickable {
+                            onSelection(selectedValue)
+                            onDismiss()
+                        },
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     TextButton(onClick = {
                         onSelection(selectedValue)
                         onDismiss()
@@ -159,8 +166,8 @@ fun SelectDay(
                         Text(
                             "تایید",
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 18.sp,
-                            color = colorResource(R.color.blue2_logo)
+                            fontSize = 22.sp,
+                            color = colorResource(R.color.blue_logo)
                         )
                     }
                 }
@@ -268,7 +275,8 @@ fun PublicDialog(
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .background(color = Color.White),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -279,33 +287,34 @@ fun PublicDialog(
                         painter = image,
                         contentDescription = ""
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
                     Text(
                         text = title,
                         style = TextStyle(
-                            fontSize = 18.sp,
+                            fontSize = 22.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             fontWeight = FontWeight.ExtraBold
                         )
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = text,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp),
+                            .padding(15.dp),
                         style = TextStyle(
-                            fontSize = 16.sp,
+                            fontSize = 19.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             textAlign = TextAlign.Center
                         )
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
                 Row(
                     modifier = Modifier
-                        .padding(top = 10.dp)
+                        .padding(top = 0.dp)
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background),
+                        .background(color = colorResource(R.color.blue_logo2).copy(alpha = 0.5f)),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     TextButton(
@@ -316,7 +325,7 @@ fun PublicDialog(
                         Text(
                             text = "لغو",
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 19.sp,
+                            fontSize = 21.sp,
                             color = colorResource(R.color.green_dark)
                         )
                     }
@@ -329,7 +338,7 @@ fun PublicDialog(
                         Text(
                             text = "تایید",
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 18.sp,
+                            fontSize = 21.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -358,49 +367,58 @@ fun InternetAlertDialog(onDismiss: () -> Unit) {
                 shape = RoundedCornerShape(15.dp),
                 elevation = CardDefaults.cardElevation(8.dp)
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start){
-                IconButton(
-                    onClick = { onDismiss() }) {
-                    Icon(Icons.Rounded.Clear, "")
-                }}
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = colorResource(R.color.white)),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    IconButton(
+                        onClick = { onDismiss() }) {
+                        Icon(Icons.Rounded.Clear, "")
+                    }
+                }
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .background(color = colorResource(R.color.white)),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
 
                     Image(
                         modifier = Modifier
-                            .size(70.dp)
+                            .size(80.dp)
                             .padding(8.dp),
                         painter = painterResource(R.drawable.no_internet),
                         contentDescription = ""
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
                     Text(
                         text = "اتصال به اینترنت",
                         style = TextStyle(
-                            fontSize = 18.sp,
+                            fontSize = 22.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             fontWeight = FontWeight.ExtraBold
                         )
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "لطفا دستگاه خود را به اینترنت متصل کنید",
                         modifier = Modifier.fillMaxWidth(),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            fontSize = 19.sp
                         )
                     )
+                    Spacer(modifier = Modifier.height(35.dp))
                 }
                 Row(
                     modifier = Modifier
-                        .padding(top = 10.dp)
+                        //.padding(top = 10.dp)
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background),
+                        .background(color = colorResource(R.color.blue_logo2).copy(alpha = 0.5f)),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     TextButton(
@@ -412,7 +430,7 @@ fun InternetAlertDialog(onDismiss: () -> Unit) {
                         Text(
                             text = "اینترنت WIFI",
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 16.sp,
+                            fontSize = 19.sp,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -430,7 +448,7 @@ fun InternetAlertDialog(onDismiss: () -> Unit) {
                         Text(
                             text = "اینترنت موبایل",
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 16.sp,
+                            fontSize = 19.sp,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -863,7 +881,7 @@ fun Spinner(
             Icon(
                 if (expanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
                 contentDescription = null,
-                tint = colorResource(R.color.green_logo),
+                tint = colorResource(R.color.sunset),
                 modifier = Modifier.size(24.dp)
             )
             Text(

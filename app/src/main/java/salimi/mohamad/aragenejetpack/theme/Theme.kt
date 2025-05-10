@@ -11,7 +11,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.colorResource
 import androidx.core.view.WindowCompat
+import org.checkerframework.checker.units.qual.s
 
 private val DarkColorScheme = darkColorScheme(
     primary = BlueLogoDark,
@@ -24,12 +26,12 @@ private val LightColorScheme = lightColorScheme(
     primary = BlueLogoLight,
     secondary = BlueLogoDark,
     tertiary = BlueLogoLight,
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    background = sefid,
+    surface = sefid,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
+    onBackground = Meshki,
     onSurface = Color(0xFF1C1B1F),
 )
 

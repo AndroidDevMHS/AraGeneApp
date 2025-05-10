@@ -7,10 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -34,9 +36,12 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import salimi.mohamad.aragenejetpack.R
 import salimi.mohamad.aragenejetpack.data.model.Sheet2
 import salimi.mohamad.aragenejetpack.screens.login.CheckConnectivityStatus
@@ -113,6 +118,7 @@ fun ArticleCard(article: Sheet2, onClick: () -> Unit) {
 
     Card(
         modifier = Modifier
+            .wrapContentHeight()
             .fillMaxWidth()
             .padding(10.dp)
             .clickable { onClick() }
@@ -128,24 +134,37 @@ fun ArticleCard(article: Sheet2, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Icon for article
-            Image(
-                painter = painterResource(id = R.drawable.newspaper),
-                contentDescription = "Newspaper Icon",
-                modifier = Modifier
-                    .size(50.dp)
-                    .padding(8.dp)
-            )
-            Text(
-                text = article.title,
-                style = TextStyle(
-                    textDirection = TextDirection.Rtl,
-                    textAlign = TextAlign.Center,
-                    fontFamily = FontFamily(Font(R.font.sans_bold)),
-                    fontSize = 18.sp
-                ),
-                color = Color.Black,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = article.title,
+                    style = TextStyle(
+                        textDirection = TextDirection.Rtl,
+                        textAlign = TextAlign.Start,
+                        lineHeight =25.sp,
+                        fontFamily = FontFamily(Font(R.font.sans_bold)),
+                        fontSize = 18.sp
+                    ),
+                    color = Color.Black,
+                    modifier = Modifier.padding(top = 8.dp).weight(0.8f)
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.news_report_by),
+                    contentDescription = "Newspaper Icon",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(5.dp)
+                        .weight(0.2f)
+                )
+
+            }
         }
     }
+}
+
+
+@Preview
+@Composable
+fun pre() {
+    val navController = rememberNavController()
+    ArticleCard(Sheet2("", "چندقلوزایی"), {})
 }

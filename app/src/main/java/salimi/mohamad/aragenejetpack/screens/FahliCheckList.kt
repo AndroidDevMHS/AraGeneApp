@@ -3,7 +3,6 @@
 package salimi.mohamad.aragenejetpack.screens
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -58,7 +57,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -85,6 +83,7 @@ import salimi.mohamad.aragenejetpack.helper.convertPersianToGregorian
 import salimi.mohamad.aragenejetpack.helper.scheduleNotifications
 import salimi.mohamad.aragenejetpack.viewModel.DataStoreViewModel
 import salimi.mohamad.aragenejetpack.viewModel.FahliCheckDbViewModel
+import androidx.core.content.edit
 
 
 @Composable
@@ -93,17 +92,16 @@ fun FahliCheckList(
     viewModelDataStore: DataStoreViewModel,
     viewModelDataBase: FahliCheckDbViewModel
 ) {
+    var welcome = viewModelDataStore.getUserWelcome()
     var itemsList by remember { mutableStateOf(emptyList<FahliCheckList>()) }
     var addDialog by remember { mutableStateOf(false) }
-    val welcomeMessage = remember { mutableStateOf(true) }
+    var welcomeMessage by remember { mutableStateOf(welcome) }
     var showSelectedDay by remember { mutableStateOf(false) }
     var selectedPackage by remember { mutableStateOf<Int?>(null) }
     val sharedPreferences = remember {
         context.getSharedPreferences("selectedPack", Context.MODE_PRIVATE)
     }
-    LaunchedEffect(Unit) {
-         welcomeMessage.value = viewModelDataStore.getUserWelcome()
-    }
+
     LaunchedEffect(key1 = true) {
         viewModelDataBase.allCheckList.collectLatest { item ->
             itemsList = item
@@ -114,10 +112,10 @@ fun FahliCheckList(
             .fillMaxSize(),
         contentAlignment = if (itemsList.isEmpty()) Alignment.Center else Alignment.TopCenter
     ) {
-        if (welcomeMessage.value) {
+        if (welcomeMessage) {
             WelcomeMessage {
                 viewModelDataStore.saveFirstLogin(showWelcome = false)
-                welcomeMessage.value = false
+                welcomeMessage = false
             }
         } else {
             if (itemsList.isEmpty()) {
@@ -133,7 +131,7 @@ fun FahliCheckList(
                             fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold))
                         )
-                    ) { append("افزودن گروه جدید برای همزمان سازی") }
+                    ) { append("افزودن گروه جدید برای همزمان سازی")}
                 }
                 ClickableText(
                     text = text,
@@ -176,10 +174,12 @@ fun FahliCheckList(
             SelectDay(
                 onDismiss = {
                     showSelectedDay = false
-                    addDialog = true
+
+                    if (selectedPackage != null)
+                        addDialog = true
                 },
                 onSelection = { selected ->
-                    sharedPreferences.edit().putInt("packNumber", selected).apply()
+                    sharedPreferences.edit { putInt("packNumber", selected) }
                     selectedPackage = selected
                 }
             )
@@ -276,7 +276,7 @@ fun LazyItem(group: FahliCheckList, viewModelDataBase: FahliCheckDbViewModel) {
                             text = group.dateOfStartShamsi,
                             style = TextStyle(
                                 fontSize = 20.sp,
-                                color=Color.White,
+                                color = Color.White,
                                 fontFamily = FontFamily(Font(R.font.sans_bold)),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -572,7 +572,7 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                         )
                     }
                 }
-                Spacer(modifier=Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -592,7 +592,7 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                         textAlign = TextAlign.Center
                     )
                 }
-                Spacer(modifier=Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Column(
                     modifier = Modifier.fillMaxHeight(),
                     verticalArrangement = Arrangement.Center
@@ -627,7 +627,7 @@ fun WelcomeMessage(onDismiss: () -> Unit) {
                                 shape = CircleShape
                             )
                     )
-                    Spacer(modifier=Modifier.width(3.dp))
+                    Spacer(modifier = Modifier.width(3.dp))
 
                 }
                 Spacer(modifier = Modifier.height(20.dp))

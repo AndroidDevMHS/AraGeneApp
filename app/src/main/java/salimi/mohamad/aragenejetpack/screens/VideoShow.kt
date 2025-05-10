@@ -125,7 +125,7 @@ fun VideoShow(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 itemsIndexed(videoUrls) { index, link ->
-                    ButtonShow(painterResource(R.drawable.video_player), txtButton[index]) {
+                    ButtonShow(painterResource(R.drawable.play), txtButton[index]) {
                         navController.navigate(Screens.ShowAparatScreen.route +"/$link")
                     }
                 }
@@ -156,7 +156,7 @@ fun ButtonShow(image: Painter, text: String, onClick: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier.size(60.dp),
                 painter = image,
                 contentDescription = "superMix"
             )

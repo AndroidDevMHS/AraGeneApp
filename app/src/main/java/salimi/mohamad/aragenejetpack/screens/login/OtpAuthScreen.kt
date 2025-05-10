@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -69,7 +70,6 @@ fun OtpAuthScreen(
     var countdownTime by remember { mutableIntStateOf(90) }
     var isResendEnabled by remember { mutableStateOf(false) }
     val focusRequesters = List(4) { FocusRequester() }
-    // val focusManager = LocalFocusManager.current
 
     // شمارش معکوس
     LaunchedEffect(countdownTime) {
@@ -96,7 +96,7 @@ fun OtpAuthScreen(
 
     Column(
         modifier = Modifier
-            .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 80.dp, start = 10.dp, end = 10.dp)
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures {
@@ -108,18 +108,19 @@ fun OtpAuthScreen(
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.ic_phone_sms),
+            painter = painterResource(id = R.drawable.ic_phone_sms_orange),
             contentDescription = "pic",
             modifier = Modifier
-                .height(150.dp)
-                .width(170.dp),
+                .padding(top = 10.dp)
+                .fillMaxWidth(0.7f) // یا 0.8f برای عرض بیشتر
+                .aspectRatio(1.5f), // نسبت عرض به ارتفاع - بسته به تصویرت تنظیم کن
         )
         Spacer(modifier = Modifier.height(14.dp))
         Text(
             text = "کد پیامک شده به شماره $phoneNumber را وارد کنید",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 18.sp,
+            fontSize = 22.sp,
 
             )
         val isOtpFilled = otpValues.all { it.isNotEmpty() }
@@ -199,7 +200,7 @@ fun OtpAuthScreen(
                 text = "زمان باقی مانده: $countdownTime ثانیه", style = TextStyle(
                     fontFamily = FontFamily(
                         Font(R.font.sans_bold)
-                    ), fontSize = 16.sp
+                    ), fontSize = 18.sp
                 )
             )
         }

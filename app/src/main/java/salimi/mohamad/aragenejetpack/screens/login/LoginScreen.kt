@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -107,7 +108,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 80.dp, start = 10.dp, end = 10.dp)
             .pointerInput(Unit) {
                 detectTapGestures {
                     keyboardController?.hide() // Hide the keyboard
@@ -118,11 +119,11 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.ic_phone_vib),
+            painter = painterResource(id = R.drawable.ic_phone_vib_orange),
             contentDescription = "",
             modifier = Modifier
-                .height(150.dp)
-                .width(160.dp)
+                .fillMaxWidth(0.7f) // یا 0.8f برای عرض بیشتر
+                .aspectRatio(1.5f),
         )
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -130,7 +131,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
             text = "آراژنی عزیز لطفا شماره تلفن همراه خود را وارد کنید",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 18.sp
+            fontSize = 22.sp
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -239,7 +240,7 @@ fun LoginScreen(navController: NavController, viewModel: SmsViewModel, context: 
                         onDismiss = { check = false },
                         title = "مقررات",
                         text = "از شماره تلفن همراه شماره فقط برای زمانی که تیک مربوط به درخواست یا خرید پک همزمان سازی علامت زده شود، برای شناسایی استفاده خواهد شد و تمامی قوانین حریم خصوصی شما رعایت خواهد شد.",
-                        image = painterResource(R.drawable.ic_phone_vib)
+                        image = painterResource(R.drawable.ic_phone_vib_orange)
                     )
                 }
             }

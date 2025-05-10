@@ -8,8 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="royal_red">#FF2400</color>
-    <color name="blue_logo">#184756</color>
-    <color name="blue_logo2">#BAEFFF</color>
     <color name="blue2_logo">#007BAB</color>
     <color name="lightGreen">#698996</color>
     <color name="mediumGreen">#97B1A6</color>
@@ -18,4 +16,8 @@
     <color name="grey_logo">#D0D2D3</color>
     <color name="light_blue">#D4EDF8</color>
     <color name="backGroud">#08000000</color>
+    <color name="blue_logo">#184756</color>
+    <color name="blue_logo2">#BAEFFF</color>
+    <color name="pumpkin">#fc7a1e</color>
+    <color name="sunset">#f9c784</color>
 </resources>

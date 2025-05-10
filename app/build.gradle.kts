@@ -93,7 +93,7 @@ dependencies {
     implementation(libs.androidx.datastore)
 
     implementation(libs.coil.compose)
-    implementation(libs.play.services.auth.api.phone)
+   // implementation(libs.play.services.auth.api.phone)
 
     //dataStore
     implementation(libs.androidx.datastore.preferences)
@@ -121,5 +121,11 @@ dependencies {
 
     //AparatViewLibrary
     implementation(libs.aparat.view)
+
+    implementation ("com.airbnb.android:lottie-compose:6.3.0")
+
+
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
+    implementation ("com.google.android.gms:play-services-auth-api-phone:18.0.2")
 
 }

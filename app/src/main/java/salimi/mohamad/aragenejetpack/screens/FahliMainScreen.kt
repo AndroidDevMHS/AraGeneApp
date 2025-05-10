@@ -1,7 +1,10 @@
 package salimi.mohamad.aragenejetpack.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,18 +16,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -42,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,39 +58,90 @@ import salimi.mohamad.aragenejetpack.R
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun FahliMainHelp() {
+    val context = LocalContext.current
+    var showDayDialog by remember { mutableStateOf(false) }
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("selectedPackForDastor", Context.MODE_PRIVATE)
+    }
+    val o=sharedPreferences.getInt("packNumberForDastor",5)
+
+    var day by remember { mutableIntStateOf(o) }
+
+    val non = listOf(buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                fontSize = 19.sp,
+                color = Color.Black,
+                fontFamily = FontFamily(Font(R.font.sans_bold))
+            )
+        ) {
+            append("لطفا یک مرحله را انتخاب کنید")
+        }
+    })
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        var selectedOption by remember { mutableStateOf<List<AnnotatedString>>(non) }
+        var selectedTitle by remember { mutableStateOf("") }
+        val listState = rememberLazyListState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            val non = listOf( buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 17.sp,
-                        color = Color.Black,
-                        fontFamily = FontFamily(Font(R.font.sans_bold))
-                    )
-                ) {
-                    append("لطفا یک مرحله را انتخاب کنید")
-                }
-            })
+            if (day == 0) {
+                showDayDialog = true
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            if (showDayDialog) {
+                SelectDay(
+                    onDismiss = {
+                        showDayDialog = false
+                        if(day==0)
+                            Toast.makeText(context,"یک آیتم را انتخاب و تایید کنید", Toast.LENGTH_SHORT).show()
 
-            Text(
-                text = "مراحل همزمان\u200Cسازی:",
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.sans_bold)),
-                    fontSize = 20.sp,
-                    textDirection = TextDirection.Rtl,
-                    textAlign = TextAlign.Justify
+                                },
+                    onSelection = { dayS ->
+                        day = dayS
+                        selectedOption=non
+                        sharedPreferences.edit { putInt("packNumberForDastor", dayS) }
+                    }
                 )
-            )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "مراحل همزمان\u200Cسازی:",
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.sans_bold)),
+                        fontSize = 22.sp,
+                        textDirection = TextDirection.Rtl,
+                        textAlign = TextAlign.Justify
+                    )
+                )
+                Text(
+                    text = " پک همزمان\u200Cسازی  ${if(day==0) "-" else day} روزه ",
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.sans_bold)),
+                        fontSize = 17.sp,
+                        color = colorResource(R.color.pumpkin),//Color.Blue, // رنگ متفاوت
+                        textDecoration = TextDecoration.Underline // زیر خط دار
+                    ),
+                    modifier = Modifier.clickable {
+                        showDayDialog = true
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
             val sections = listOf(
                 buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
-                            color = colorResource(R.color.green_dark)
+                            fontSize = 20.sp,
+                            color = colorResource(R.color.sunset)
                         )
                     ) {
                         addStringAnnotation(
@@ -95,7 +153,7 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                             color = colorResource(R.color.black),
 
@@ -109,7 +167,7 @@ fun FahliMainHelp() {
                         )
                         withStyle(
                             style = SpanStyle(
-                                fontSize = 17.sp,
+                                fontSize = 20.sp,
                                 color = colorResource(R.color.royal_red)
                             )
                         ) {
@@ -117,7 +175,7 @@ fun FahliMainHelp() {
                         }
                         withStyle(
                             style = SpanStyle(
-                                fontSize = 17.sp,
+                                fontSize = 20.sp,
                                 color = colorResource(R.color.black)
                             )
                         ) {
@@ -125,7 +183,7 @@ fun FahliMainHelp() {
                         }
                         withStyle(
                             style = SpanStyle(
-                                fontSize = 17.sp,
+                                fontSize = 20.sp,
                                 color = colorResource(R.color.royal_red)
                             )
                         ) {
@@ -133,7 +191,7 @@ fun FahliMainHelp() {
                         }
                         withStyle(
                             style = SpanStyle(
-                                fontSize = 17.sp,
+                                fontSize = 20.sp,
                                 color = colorResource(R.color.black)
                             )
                         ) {
@@ -141,7 +199,7 @@ fun FahliMainHelp() {
                         }
                         withStyle(
                             style = SpanStyle(
-                                fontSize = 17.sp,
+                                fontSize = 20.sp,
                                 textDecoration = TextDecoration.Underline,
                                 color = colorResource(R.color.black)
                             )
@@ -159,7 +217,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -179,7 +237,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -198,7 +256,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold))
                         )
@@ -217,7 +275,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold))
                         )
@@ -236,7 +294,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold))
                         )
@@ -255,7 +313,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -266,7 +324,7 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.royal_red),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -283,7 +341,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -294,7 +352,7 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.royal_red),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -303,7 +361,7 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -322,7 +380,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -343,7 +401,7 @@ fun FahliMainHelp() {
                     withStyle(
                         style = SpanStyle(
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black)
                         )
                     ) {
@@ -363,7 +421,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -377,7 +435,7 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.royal_red),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -386,16 +444,16 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
                     ) {
-                        append("\nبه قوچ ها نیز می توان ویتامین فسفر ب 12، ای- سلنیوم و یا ویتامین آ-د3- ای در روز سیدر گزاری و سیدر برداری تزریق کرد.")
+                        append("به قوچ ها نیز می توان ویتامین فسفر ب 12، ای- سلنیوم و یا ویتامین آ-د3- ای در روز سیدر گزاری و سیدر برداری تزریق کرد.\n")
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.royal_red),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -404,7 +462,7 @@ fun FahliMainHelp() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -421,7 +479,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -440,7 +498,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -459,7 +517,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -478,7 +536,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -497,14 +555,24 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
                     ) {
-                        append(
-                            "امروز کار خاصی نباید انجام دهید."
-                        )
+                        if (day == 7) {
+                            append(
+                                "امروز کار خاصی نباید انجام دهید."
+                            )
+                        } else {
+                            append(
+                                "ﭘﺲ از ﺑﯿﺮون ﮐﺸﯿﺪن سیدر در روز پنجم، ﺗﺰرﯾﻘﺎت زﯾﺮ را ﺑﻼﻓﺎﺻﻠﻪ اﻧﺠﺎم دﻫﯿﺪ:\n" +
+                                        "ﺗﺰرﯾﻖ مقدار مشخص شده  از ﻫﻮرﻣﻮن شیشه\u200Cای \"روز  5\" به مقدار یک و دو دهم سی سی.\n" +
+                                        "ﺗﺰرﯾﻖ 2 ﺳﯽﺳﯽ از ﻫﻮرﻣﻮن ﺗﺮﮐﯿﺒﯽ روز 5 (ﭘﻮدری +ویال شیشه\u200Cای 50 سی سی): ﺟﻬﺖ ﺗﻬﯿﻪ اﯾﻦ ﻣﺤﻠﻮل، ﺑﺎ اﺳﺘﻔﺎده از ﺳﺮﻧﮓ 10 سی سی بزرگ قرار داده شده در بسته، 2ﺳﯽ ﺳﯽ از ﻣﺤﻠﻮل داﺧﻞ شیشه بزرگ را ﮐﺸﯿﺪه و وارد ویال ﺣﺎوي هورمون ﭘﻮدری ﻧﻤﺎﯾﯿﺪ. ﭼﻨﺪﯾﻦ ﺑﺎر ﺷﯿﺸﻪ را به آرامی به مدت یک دقیقه ﺳﺮوﺗﻪ ﻧﻤﺎﯾﯿﺪ ﺗﺎ ﭘﻮدر ﮐﺎﻣﻼ ﺣﻞ ﺷﻮد. از ﺗﮑﺎن دادن ﺷﺪﯾﺪ ﺧﻮدداري ﮐﻨﯿﺪ. ﭘﺲ از ﺣﻞ ﺷﺪن ﭘﻮدر، ﻣﺤﻠﻮل را ﺑﻪ ویال بزرگ اﻧﺘﻘﺎل دﻫﯿﺪ و ﭼﻨﺪ ﺑﺎر به آرامی ﺳﺮ و ﺗﻪ ﻧﻤﺎﯾﯿﺪ. ﺳﭙﺲ از اﯾﻦ ﻣﺤﻠﻮل 2 ﺳﯽﺳﯽ ﺑﻪ ﺻﻮرت ﻋﻀﻼﻧﯽ ﺑﻪ میش¬ها ﺗﺰرﯾﻖ ﻧﻤﺎﯾﯿﺪ.\n" +
+                                        "تزریق ای- سلنیوم و ویتامین آ-د3- ای به صورت زیر جلدی.\n" +
+                                        "تزریق فسفر ب12 به صورت عضلانی.\n"
+                            )
+                        }
                     }
                 },
                 buildAnnotatedString {
@@ -516,7 +584,7 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
@@ -535,18 +603,24 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
                     ) {
-                        append(
-                            "ﭘﺲ از ﺑﯿﺮون ﮐﺸﯿﺪن سیدر در روز هفتم، ﺗﺰرﯾﻘﺎت زﯾﺮ را ﺑﻼﻓﺎﺻﻠﻪ اﻧﺠﺎم دﻫﯿﺪ:\n" +
-                                    "ﺗﺰرﯾﻖ مقدار مشخص شده  از ﻫﻮرﻣﻮن شیشه\u200Cای \"روز  7\" به مقدار یک و دو دهم سی سی.\n" +
-                                    "ﺗﺰرﯾﻖ 2 ﺳﯽﺳﯽ از ﻫﻮرﻣﻮن ﺗﺮﮐﯿﺒﯽ روز 7 (ﭘﻮدری +ویال شیشه\u200Cای 50 سی سی): ﺟﻬﺖ ﺗﻬﯿﻪ اﯾﻦ ﻣﺤﻠﻮل، ﺑﺎ اﺳﺘﻔﺎده از ﺳﺮﻧﮓ 10 سی سی بزرگ قرار داده شده در بسته، 2ﺳﯽ ﺳﯽ از ﻣﺤﻠﻮل داﺧﻞ شیشه بزرگ را ﮐﺸﯿﺪه و وارد ویال ﺣﺎوي هورمون ﭘﻮدری ﻧﻤﺎﯾﯿﺪ. ﭼﻨﺪﯾﻦ ﺑﺎر ﺷﯿﺸﻪ را به آرامی به مدت یک دقیقه ﺳﺮوﺗﻪ ﻧﻤﺎﯾﯿﺪ ﺗﺎ ﭘﻮدر ﮐﺎﻣﻼ ﺣﻞ ﺷﻮد. از ﺗﮑﺎن دادن ﺷﺪﯾﺪ ﺧﻮدداري ﮐﻨﯿﺪ. ﭘﺲ از ﺣﻞ ﺷﺪن ﭘﻮدر، ﻣﺤﻠﻮل را ﺑﻪ ویال بزرگ اﻧﺘﻘﺎل دﻫﯿﺪ و ﭼﻨﺪ ﺑﺎر به آرامی ﺳﺮ و ﺗﻪ ﻧﻤﺎﯾﯿﺪ. ﺳﭙﺲ از اﯾﻦ ﻣﺤﻠﻮل 2 ﺳﯽﺳﯽ ﺑﻪ ﺻﻮرت ﻋﻀﻼﻧﯽ ﺑﻪ میش¬ها ﺗﺰرﯾﻖ ﻧﻤﺎﯾﯿﺪ.\n" +
-                                    "تزریق ای- سلنیوم و ویتامین آ-د3- ای به صورت زیر جلدی.\n" +
-                                    "تزریق فسفر ب12 به صورت عضلانی.\n"
-                        )
+                        if (day == 7) {
+                            append(
+                                "ﭘﺲ از ﺑﯿﺮون ﮐﺸﯿﺪن سیدر در روز هفتم، ﺗﺰرﯾﻘﺎت زﯾﺮ را ﺑﻼﻓﺎﺻﻠﻪ اﻧﺠﺎم دﻫﯿﺪ:\n" +
+                                        "ﺗﺰرﯾﻖ مقدار مشخص شده  از ﻫﻮرﻣﻮن شیشه\u200Cای \"روز  7\" به مقدار یک و دو دهم سی سی.\n" +
+                                        "ﺗﺰرﯾﻖ 2 ﺳﯽﺳﯽ از ﻫﻮرﻣﻮن ﺗﺮﮐﯿﺒﯽ روز 7 (ﭘﻮدری +ویال شیشه\u200Cای 50 سی سی): ﺟﻬﺖ ﺗﻬﯿﻪ اﯾﻦ ﻣﺤﻠﻮل، ﺑﺎ اﺳﺘﻔﺎده از ﺳﺮﻧﮓ 10 سی سی بزرگ قرار داده شده در بسته، 2ﺳﯽ ﺳﯽ از ﻣﺤﻠﻮل داﺧﻞ شیشه بزرگ را ﮐﺸﯿﺪه و وارد ویال ﺣﺎوي هورمون ﭘﻮدری ﻧﻤﺎﯾﯿﺪ. ﭼﻨﺪﯾﻦ ﺑﺎر ﺷﯿﺸﻪ را به آرامی به مدت یک دقیقه ﺳﺮوﺗﻪ ﻧﻤﺎﯾﯿﺪ ﺗﺎ ﭘﻮدر ﮐﺎﻣﻼ ﺣﻞ ﺷﻮد. از ﺗﮑﺎن دادن ﺷﺪﯾﺪ ﺧﻮدداري ﮐﻨﯿﺪ. ﭘﺲ از ﺣﻞ ﺷﺪن ﭘﻮدر، ﻣﺤﻠﻮل را ﺑﻪ ویال بزرگ اﻧﺘﻘﺎل دﻫﯿﺪ و ﭼﻨﺪ ﺑﺎر به آرامی ﺳﺮ و ﺗﻪ ﻧﻤﺎﯾﯿﺪ. ﺳﭙﺲ از اﯾﻦ ﻣﺤﻠﻮل 2 ﺳﯽﺳﯽ ﺑﻪ ﺻﻮرت ﻋﻀﻼﻧﯽ ﺑﻪ میش¬ها ﺗﺰرﯾﻖ ﻧﻤﺎﯾﯿﺪ.\n" +
+                                        "تزریق ای- سلنیوم و ویتامین آ-د3- ای به صورت زیر جلدی.\n" +
+                                        "تزریق فسفر ب12 به صورت عضلانی.\n"
+                            )
+                        } else {
+                            append(
+                                "امروز کار خاصی نباید انجام دهید."
+                            )
+                        }
                     }
                 }
 
@@ -556,7 +630,7 @@ fun FahliMainHelp() {
                 buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             fontFamily = FontFamily(Font(R.font.sans_bold))
                         )
                     ) {
@@ -582,21 +656,23 @@ fun FahliMainHelp() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            fontSize = 17.sp,
+                            fontSize = 20.sp,
                             color = colorResource(R.color.black),
                             fontFamily = FontFamily(Font(R.font.sans_bold)),
                         )
                     ) {
-                        append("از اﻧﺠﺎم واﮐﺴﯿﻨﺎﺳﯿﻮن و ﯾﺎ ﻋﻤﻠﯿﺎت ﭘﺸﻢﭼﯿﻨﯽ، ﺳﻢﭼﯿﻨﯽ، اﻧﮕﻞزداﯾﯽ، ﺗﻐﯿﯿﺮات ﺷﺪﯾﺪ ﺟﯿﺮه، انتقال میش\u200Cها به مراتع بهاره و.....ﺗﺎ ﯾﮏ ﻣﺎه ﭘﺲ از ﻗﻮچ اﻧﺪازي ﺧﻮدداري ﻓﺮﻣﺎﯾﯿﺪ.\n" +
-                                "ﺗﻮﺻﯿﻪ ﻣﯽﺷﻮد ﺟﻬﺖ اﻓﺰاﯾﺶ دوﻗﻠﻮزاﯾﯽ و ﮐﺎﻫﺶ ﺑﺮﮔﺸﺖ ﻓﺤﻠﯽ، ﺑﻪ وﯾﮋه در ﺷﺮاﯾﻂ ﺗﻨﺶ ﮔﺮﻣﺎﯾﯽ ﺗﺎﺑﺴﺘﺎن، ﻣﻘﺪار 3 سی سی ﻫﻮرﻣﻮن ﮔﻨﺎدورﻟﯿﻦ (وﺗﺎروﻟﯿﻦ) ﺑﻪ ﺻﻮرت عضلانی، سه روز ﭘﺲ از ﻗﻮچ اﻧﺪازي ﺑﻪ ﻫﻤﻪ ﻣﯿﺶﻫﺎ ﺗﺰرﯾﻖ ﺷﻮد. \n" +
-                                "ﺗﻮﺻﯿﻪ ﻣﯽﺷﻮد، دوازده ﺗﺎ بیست و یک روز ﭘﺲ از ﻗﻮچ اﻧﺪازي، ﻗﻮچﻫﺎي ﻣﻮﻟﺪ را در ﺑﯿﻦ ﻣﯿﺶﻫﺎ ﻧﮕﻬﺪاري ﻧﻤﺎﯾﯿﺪ.\n")
+                        append(
+                            "از اﻧﺠﺎم واﮐﺴﯿﻨﺎﺳﯿﻮن و ﯾﺎ ﻋﻤﻠﯿﺎت ﭘﺸﻢﭼﯿﻨﯽ، ﺳﻢﭼﯿﻨﯽ، اﻧﮕﻞزداﯾﯽ، ﺗﻐﯿﯿﺮات ﺷﺪﯾﺪ ﺟﯿﺮه، انتقال میش\u200Cها به مراتع بهاره و.....ﺗﺎ ﯾﮏ ﻣﺎه ﭘﺲ از ﻗﻮچ اﻧﺪازي ﺧﻮدداري ﻓﺮﻣﺎﯾﯿﺪ.\n" +
+                                    "ﺗﻮﺻﯿﻪ ﻣﯽﺷﻮد ﺟﻬﺖ اﻓﺰاﯾﺶ دوﻗﻠﻮزاﯾﯽ و ﮐﺎﻫﺶ ﺑﺮﮔﺸﺖ ﻓﺤﻠﯽ، ﺑﻪ وﯾﮋه در ﺷﺮاﯾﻂ ﺗﻨﺶ ﮔﺮﻣﺎﯾﯽ ﺗﺎﺑﺴﺘﺎن، ﻣﻘﺪار 3 سی سی ﻫﻮرﻣﻮن ﮔﻨﺎدورﻟﯿﻦ (وﺗﺎروﻟﯿﻦ) ﺑﻪ ﺻﻮرت عضلانی، سه روز ﭘﺲ از ﻗﻮچ اﻧﺪازي ﺑﻪ ﻫﻤﻪ ﻣﯿﺶﻫﺎ ﺗﺰرﯾﻖ ﺷﻮد. \n" +
+                                    "ﺗﻮﺻﯿﻪ ﻣﯽﺷﻮد، دوازده ﺗﺎ بیست و یک روز ﭘﺲ از ﻗﻮچ اﻧﺪازي، ﻗﻮچﻫﺎي ﻣﻮﻟﺪ را در ﺑﯿﻦ ﻣﯿﺶﻫﺎ ﻧﮕﻬﺪاري ﻧﻤﺎﯾﯿﺪ.\n"
+                        )
                     }
                 }
             )
-            var selectedOption by remember { mutableStateOf<List<AnnotatedString>>(non) }
+     /*       var selectedOption by remember { mutableStateOf<List<AnnotatedString>>(non) }
             var selectedTitle by remember { mutableStateOf("") }
             val listState = rememberLazyListState()
-
+*/
 
             data class Option(
                 val label: String,
@@ -609,9 +685,16 @@ fun FahliMainHelp() {
                 Option("مرحله دوم", sections2, "همزمان‌سازی"),
                 Option("مرحله سوم", sections3, "قوچ اندازی و مراقبت\u200Cهای بعد از قوچ اندازی"),
             )
-            Row {
+            Row(modifier= Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 options.forEach { option ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = option.label,
+                            modifier = Modifier.padding(start = 8.dp),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily(Font(R.font.sans_bold)),
+                        )
                         RadioButton(
                             selected = selectedOption == option.longText,
                             onClick = {
@@ -622,17 +705,11 @@ fun FahliMainHelp() {
                                 }
                             },
                             colors = RadioButtonDefaults.colors(
-                                selectedColor = colorResource(R.color.blue_logo),
+                                selectedColor = colorResource(R.color.sunset),
                                 unselectedColor = Color.Black
                             )
                         )
-                        Text(
-                            text = option.label,
-                            modifier = Modifier.padding(start = 8.dp),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily(Font(R.font.sans_bold)),
-                        )
+
                     }
                 }
             }
